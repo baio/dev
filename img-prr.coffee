@@ -1,8 +1,9 @@
+express = require 'express'
 gm = require 'gm'
 http = require 'http'
 fs = require 'fs'
-url = require 'url'
 r = require 'request'
+
 
 class ImageProccessor
         
@@ -35,20 +36,18 @@ class ImageProccessor
             #get setting params from request
             @options.settings = @getSettings options.request
                         
-    getSettings: (request) ->
-        
-        url_parts = url.parse request.url, true
-        
+    getSettings: (req) ->
+                
         return {
-            url : unescape url_parts.query.url
-            callback : url_parts.query.callback
-            proccess : url_parts.query.proccess }
+            url : unescape req.param("url")
+            callback : req.param "callback"
+            proccess : req.param "proccess" }
             
     proccess: ->
         t = @
-        r uri : @options.settings.url, encoding : "binary",   (error, response, body) -> 
+        r uri : @options.settings.url, encoding : "binary", httpModule : true,  (error, response, body) -> 
                     t.handleResponse error, response, body   
-        null
+                    null
         #re.pipe fs.createWriteStream("test3.png")
             
     handleResponse: (error, response, image) ->
@@ -81,7 +80,7 @@ class ImageProccessor
         gm(TMP_FILE_NAME).size (err, size) ->
 
             # Delete the tmp image
-            #fs.unlink TMP_FILE_NAME
+            fs.unlink TMP_FILE_NAME
 
             res = opt.response
             
@@ -97,15 +96,19 @@ class ImageProccessor
                     data : image_64
 
                 res.writeHead 200, 'Content-Type' : 'application/json; charset=UTF-8'
-
+                
                 ret = "#{opt.settings.callback}(#{JSON.stringify(obj)});"
                 
                 res.end ret
                 
-s = http.createServer (req, res) ->
-        ImageProccessor.Proccess request : req, response : res
+                
+app = express.createServer()
+
+
+app.get '/', (req, res) ->
+            ImageProccessor.Proccess request : req, response : res
         
-s.listen 8087
+app.listen 8087
 
 console.log 'Server running at http://maxvm.goip.ru:8087/'
 

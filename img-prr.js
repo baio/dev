@@ -1,9 +1,9 @@
 (function() {
-  var ImageProccessor, fs, gm, http, r, s, url;
+  var ImageProccessor, app, express, fs, gm, http, r;
+  express = require('express');
   gm = require('gm');
   http = require('http');
   fs = require('fs');
-  url = require('url');
   r = require('request');
   ImageProccessor = (function() {
     var TMP_FILE_NAME, options, settings;
@@ -29,25 +29,24 @@
         this.options.settings = this.getSettings(options.request);
       }
     }
-    ImageProccessor.prototype.getSettings = function(request) {
-      var url_parts;
-      url_parts = url.parse(request.url, true);
+    ImageProccessor.prototype.getSettings = function(req) {
       return {
-        url: unescape(url_parts.query.url),
-        callback: url_parts.query.callback,
-        proccess: url_parts.query.proccess
+        url: unescape(req.param("url")),
+        callback: req.param("callback"),
+        proccess: req.param("proccess")
       };
     };
     ImageProccessor.prototype.proccess = function() {
       var t;
       t = this;
-      r({
+      return r({
         uri: this.options.settings.url,
-        encoding: "binary"
+        encoding: "binary",
+        httpModule: true
       }, function(error, response, body) {
-        return t.handleResponse(error, response, body);
+        t.handleResponse(error, response, body);
+        return null;
       });
-      return null;
     };
     ImageProccessor.prototype.handleResponse = function(error, response, image) {
       var img, mimetype, t, ws;
@@ -74,6 +73,7 @@
       opt = this.options;
       return gm(TMP_FILE_NAME).size(function(err, size) {
         var image_64, obj, res, ret;
+        fs.unlink(TMP_FILE_NAME);
         res = opt.response;
         if (err) {
           return res.end(err.message, 400);
@@ -94,12 +94,13 @@
     };
     return ImageProccessor;
   })();
-  s = http.createServer(function(req, res) {
+  app = express.createServer();
+  app.get('/', function(req, res) {
     return ImageProccessor.Proccess({
       request: req,
       response: res
     });
   });
-  s.listen(8087);
+  app.listen(8087);
   console.log('Server running at http://maxvm.goip.ru:8087/');
 }).call(this);
