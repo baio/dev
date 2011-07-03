@@ -1,88 +1,112 @@
-
-require.paths.unshift(__dirname + '/lib/')
-
-http = require 'http'
-request = require 'request'
-fs = require 'fs'
-
-BufferList = require('bufferlist').BufferList
 gm = require 'gm'
 http = require 'http'
 fs = require 'fs'
-sys = require 'sys'
 url = require 'url'
+r = require 'request'
 
-hResp = (buf, filename, callback, res, error, response, body) ->
-    
-    if !error and response.statusCode == 200
-    
-        mimetype = response.headers["content-type"];
+class ImageProccessor
         
-        if mimetype == "image/gif" or mimetype == "image/jpeg" or
-    		        mimetype == "image/jpg" or mimetype == "image/png" or mimetype == "image/tiff"
+    TMP_FILE_NAME = "test.png"
     
-            type_prefix = "data:" + mimetype + ";base64,"
-            # Get the image from the response stream as a string and convert it to base64
-    
-            image_64 = body.toString 'base64'
-    
-            # Concat the prefix and the image
-            image_64 = type_prefix + image_64
-    
-            # Set width and height to 0
-            width = 0
-            height = 0
+    settings = 
+        
+        url : null
+        
+        callback : null
+                
+        proccess : null
+        
+    options = 
+        
+        request : null
+        
+        response : null
+        
+        settings : null
+        
+    #static method
+    @Proccess : (options) ->
+        imgPrr = new ImageProccessor options
+        imgPrr.proccess()
             
-            fs.write filename, body
+    constructor: (@options) ->
         
-            # Get the image dimensions using GraphicsMagick
-            gm(filename).size (err, size) ->
+        if options.request
+            #get setting params from request
+            @options.settings = @getSettings options.request
+                        
+    getSettings: (request) ->
+        
+        url_parts = url.parse request.url, true
+        
+        return {
+            url : unescape url_parts.query.url
+            callback : url_parts.query.callback
+            proccess : url_parts.query.proccess }
+            
+    proccess: ->
+        t = @
+        r uri : @options.settings.url, encoding : "binary",   (error, response, body) -> 
+                    t.handleResponse error, response, body   
+        null
+        #re.pipe fs.createWriteStream("test3.png")
+            
+    handleResponse: (error, response, image) ->
     
-                # Delete the tmp image
-                #fs.unlink filename
+        if !error and response.statusCode == 200
     
-                # Error getting dimensions
-                if err
-                     res.end err.message, 400
-                else
-                    width = size.width
-                    height = size.height
-    
-                    #The data to be returned
-                    return_variable =
-                        "width": width
-                        "height": height
-                        "data": image_64
-    
-                    # Stringifiy the return variable and wrap it in the callback for JSONP compatibility
-                    return_variable = "#{callback}(#{JSON.stringify(return_variable)});"
-    
-                    # Set the headers as OK and JS
-                    res.writeHead 200, 'Content-Type' : 'application/json; charset=UTF-8'
-    
-                    #Return the data
-                    res.end return_variable
-    
+            mimetype = response.headers["content-type"]
+            
+            if mimetype == "image/gif" or mimetype == "image/jpeg" or
+                        mimetype == "image/jpg" or mimetype == "image/png" or mimetype == "image/tiff"
+                      
+                ws = fs.createWriteStream TMP_FILE_NAME, encoding : "binary"
+                
+                t = @
+                
+                img = new Buffer image.toString(), 'binary'
+                
+                ws.write img, (err, written, buffer) -> 
+                    if !err
+                        t.proccessImage()
+                        t.sendResponse img, mimetype
+            
+    proccessImage: ->
+                
+    sendResponse: (image, mimetype) ->
+        
+        opt = @options
+        
+        # Get the image dimensions using GraphicsMagick
+        gm(TMP_FILE_NAME).size (err, size) ->
 
+            # Delete the tmp image
+            #fs.unlink TMP_FILE_NAME
+
+            res = opt.response
+            
+            # Error getting dimensions
+            if err
+                 res.end err.message, 400
+            else
+                image_64 = "data:#{mimetype};base64,#{image.toString('base64')}"
+
+                obj =
+                    width : size.width
+                    height : size.height
+                    data : image_64
+
+                res.writeHead 200, 'Content-Type' : 'application/json; charset=UTF-8'
+
+                ret = "#{opt.settings.callback}(#{JSON.stringify(obj)});"
+                
+                res.end ret
+                
 s = http.createServer (req, res) ->
+        ImageProccessor.Proccess request : req, response : res
         
-        url_parts = url.parse req.url, true
-
-        u = unescape url_parts.query.url
-        c = url_parts.query.callback
-        
-        if !u or !c
-            res.end "url and callback must be defined", 400
-        else
-            filename = "/tmp/" + u.substring u.lastIndexOf('/') + 1
-    
-            r = request uri : u, encoding : "binary",   (error, response, body) -> 
-                                hResp buf, filename, c, res, error, response, body
-                                
-            #buf = r.pipe  fs.createWriteStream(filename)    
-
-        
-    
 s.listen 8087
+
 console.log 'Server running at http://maxvm.goip.ru:8087/'
+
 
