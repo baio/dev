@@ -5,7 +5,7 @@ fs = require 'fs'
 r = require 'request'
 
 
-class ImageProccessor
+class ImageProcessor
         
     TMP_FILE_NAME = "test.png"
     
@@ -15,7 +15,7 @@ class ImageProccessor
         
         callback : null
                 
-        proccess : null
+        process : null
         
     options = 
         
@@ -26,8 +26,8 @@ class ImageProccessor
         settings : null
         
     #static method
-    @Proccess : (options) ->
-        imgPrr = new ImageProccessor options
+    @Process : (options) ->
+        imgPrr = new ImageProcessor options
         imgPrr.proccess()
             
     constructor: (@options) ->
@@ -42,6 +42,19 @@ class ImageProccessor
             url : unescape req.param("url")
             callback : req.param "callback"
             proccess : req.param "proccess" }
+            
+    getProcessor: (index) ->
+        
+        pr = @options.settings.process.split(";")[index]
+        
+        prr = pr.split '-'
+        
+        return name : prr[0], params : prr[1].split(',') if prr.lengtn > 1
+        
+    getProcessorsCnt: () ->
+        pr = @options.settings.process
+        if pr then pr.split(";").length else 0
+                
             
     proccess: ->
         t = @
@@ -68,16 +81,16 @@ class ImageProccessor
                     
                     if !err
                         
-                        t.proccessImage ->
+                        t.processImage ->
                             # Get data from file, after proccessing
                             fs.readFile TMP_FILE_NAME, (err, data)->
                                   if !err 
                                     t.sendResponse data, mimetype
             
-    proccessImage: (callback, index) ->
+    processImage: (callback, index) ->
         
         #if first opertaion in stack 
-        index ?= 1
+        index ?= @getProcessorsCnt()
         
         #if last operation in stack
         if index == 0
@@ -85,11 +98,16 @@ class ImageProccessor
         else        
             index--
             
-            dlg = @.proccessImage
-                
-            gm(TMP_FILE_NAME).resize(50, 50, '%').write TMP_FILE_NAME, (err) ->
-                    if !err
-                        dlg callback, index
+            dlg = @processImage
+            
+            prr = @getProcessor index
+            
+            gmf = gm TMP_FILE_NAME
+            
+            switch prr.name
+                when "resize"  
+                    gmf.resize(prr.prms[0], prr.prms[1], prr.prms[2]).write TMP_FILE_NAME, (err) ->
+                        if !err then dlg callback, index
                 
     sendResponse: (image, mimetype) ->
                 
@@ -125,7 +143,7 @@ app = express.createServer()
 
 
 app.get '/', (req, res) ->
-            ImageProccessor.Proccess request : req, response : res
+            ImageProcessor.Process request : req, response : res
         
 app.listen 8087
 

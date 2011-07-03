@@ -1,42 +1,60 @@
 (function() {
-  var ImageProccessor, app, express, fs, gm, http, r;
+  var ImageProcessor, app, express, fs, gm, http, r;
   express = require('express');
   gm = require('gm');
   http = require('http');
   fs = require('fs');
   r = require('request');
-  ImageProccessor = (function() {
+  ImageProcessor = (function() {
     var TMP_FILE_NAME, options, settings;
     TMP_FILE_NAME = "test.png";
     settings = {
       url: null,
       callback: null,
-      proccess: null
+      process: null
     };
     options = {
       request: null,
       response: null,
       settings: null
     };
-    ImageProccessor.Proccess = function(options) {
+    ImageProcessor.Process = function(options) {
       var imgPrr;
-      imgPrr = new ImageProccessor(options);
+      imgPrr = new ImageProcessor(options);
       return imgPrr.proccess();
     };
-    function ImageProccessor(options) {
+    function ImageProcessor(options) {
       this.options = options;
       if (options.request) {
         this.options.settings = this.getSettings(options.request);
       }
     }
-    ImageProccessor.prototype.getSettings = function(req) {
+    ImageProcessor.prototype.getSettings = function(req) {
       return {
         url: unescape(req.param("url")),
         callback: req.param("callback"),
         proccess: req.param("proccess")
       };
     };
-    ImageProccessor.prototype.proccess = function() {
+    ImageProcessor.prototype.getProcessor = function(index) {
+      var pr, prr;
+      pr = this.options.settings.process.split(";")[index];
+      prr = pr.split('-');
+      return {
+        name: prr[0],
+        params: prr.lengtn > 1 ? prr[1].split(',') : void 0
+      };
+    };
+    ImageProcessor.prototype.getProcessorsCnt = function() {
+      var pr;
+      pr = this.options.settings.process;
+      if (pr) {
+        return pr.split(";").length;
+      } else {
+        return 0;
+      }
+    };
+    ImageProcessor.prototype.proccess = function() {
       var t;
       t = this;
       return r({
@@ -48,7 +66,7 @@
         return null;
       });
     };
-    ImageProccessor.prototype.handleResponse = function(error, response, image) {
+    ImageProcessor.prototype.handleResponse = function(error, response, image) {
       var img, mimetype, t, ws;
       if (!error && response.statusCode === 200) {
         mimetype = response.headers["content-type"];
@@ -60,7 +78,7 @@
           img = new Buffer(image.toString(), 'binary');
           return ws.write(img, function(err, written, buffer) {
             if (!err) {
-              return t.proccessImage(function() {
+              return t.processImage(function() {
                 return fs.readFile(TMP_FILE_NAME, function(err, data) {
                   if (!err) {
                     return t.sendResponse(data, mimetype);
@@ -72,26 +90,31 @@
         }
       }
     };
-    ImageProccessor.prototype.proccessImage = function(callback, index) {
-      var dlg;
+    ImageProcessor.prototype.processImage = function(callback, index) {
+      var dlg, gmf, prr;
             if (index != null) {
         index;
       } else {
-        index = 1;
+        index = this.getProcessorsCnt();
       };
       if (index === 0) {
         return callback();
       } else {
         index--;
-        dlg = this.proccessImage;
-        return gm(TMP_FILE_NAME).resize(50, 50, '%').write(TMP_FILE_NAME, function(err) {
-          if (!err) {
-            return dlg(callback, index);
-          }
-        });
+        dlg = this.processImage;
+        prr = this.getProcessor(index);
+        gmf = gm(TMP_FILE_NAME);
+        switch (prr.name) {
+          case "resize":
+            return gmf.resize(prr.prms[0], prr.prms[1], prr.prms[2]).write(TMP_FILE_NAME, function(err) {
+              if (!err) {
+                return dlg(callback, index);
+              }
+            });
+        }
       }
     };
-    ImageProccessor.prototype.sendResponse = function(image, mimetype) {
+    ImageProcessor.prototype.sendResponse = function(image, mimetype) {
       var opt;
       opt = this.options;
       return gm(TMP_FILE_NAME).size(function(err, size) {
@@ -115,11 +138,11 @@
         }
       });
     };
-    return ImageProccessor;
+    return ImageProcessor;
   })();
   app = express.createServer();
   app.get('/', function(req, res) {
-    return ImageProccessor.Proccess({
+    return ImageProcessor.Process({
       request: req,
       response: res
     });
