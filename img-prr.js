@@ -60,14 +60,37 @@
           img = new Buffer(image.toString(), 'binary');
           return ws.write(img, function(err, written, buffer) {
             if (!err) {
-              t.proccessImage();
-              return t.sendResponse(img, mimetype);
+              return t.proccessImage(function() {
+                return fs.readFile(TMP_FILE_NAME, function(err, data) {
+                  if (!err) {
+                    return t.sendResponse(data, mimetype);
+                  }
+                });
+              });
             }
           });
         }
       }
     };
-    ImageProccessor.prototype.proccessImage = function() {};
+    ImageProccessor.prototype.proccessImage = function(callback, index) {
+      var dlg;
+            if (index != null) {
+        index;
+      } else {
+        index = 1;
+      };
+      if (index === 0) {
+        return callback();
+      } else {
+        index--;
+        dlg = this.proccessImage;
+        return gm(TMP_FILE_NAME).resize(50, 50, '%').write(TMP_FILE_NAME, function(err) {
+          if (!err) {
+            return dlg(callback, index);
+          }
+        });
+      }
+    };
     ImageProccessor.prototype.sendResponse = function(image, mimetype) {
       var opt;
       opt = this.options;

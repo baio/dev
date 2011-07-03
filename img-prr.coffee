@@ -48,7 +48,6 @@ class ImageProccessor
         r uri : @options.settings.url, encoding : "binary", httpModule : true,  (error, response, body) -> 
                     t.handleResponse error, response, body   
                     null
-        #re.pipe fs.createWriteStream("test3.png")
             
     handleResponse: (error, response, image) ->
     
@@ -66,16 +65,36 @@ class ImageProccessor
                 img = new Buffer image.toString(), 'binary'
                 
                 ws.write img, (err, written, buffer) -> 
+                    
                     if !err
-                        t.proccessImage()
-                        t.sendResponse img, mimetype
+                        
+                        t.proccessImage ->
+                            # Get data from file, after proccessing
+                            fs.readFile TMP_FILE_NAME, (err, data)->
+                                  if !err 
+                                    t.sendResponse data, mimetype
             
-    proccessImage: ->
+    proccessImage: (callback, index) ->
+        
+        #if first opertaion in stack 
+        index ?= 1
+        
+        #if last operation in stack
+        if index == 0
+            callback()
+        else        
+            index--
+            
+            dlg = @.proccessImage
+                
+            gm(TMP_FILE_NAME).resize(50, 50, '%').write TMP_FILE_NAME, (err) ->
+                    if !err
+                        dlg callback, index
                 
     sendResponse: (image, mimetype) ->
-        
+                
         opt = @options
-        
+         
         # Get the image dimensions using GraphicsMagick
         gm(TMP_FILE_NAME).size (err, size) ->
 
