@@ -32,7 +32,7 @@ app.get('/', function(req, res){
         });
 
         
-        r.pipe(fs.createWriteStream("test3.png"), encoding="binary");
+        r.pipe(fs.createWriteStream("test3.png"), {encoding:"binary"});
         */
         
         
