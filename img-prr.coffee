@@ -41,7 +41,7 @@ class ImageProcessor
         return {
             url : unescape req.param("url")
             callback : req.param "callback"
-            proccess : req.param "proccess" }
+            process : req.param "process" }
             
     getProcessor: (index) ->
         
@@ -49,13 +49,14 @@ class ImageProcessor
         
         prr = pr.split '-'
         
-        return name : prr[0], params : prr[1].split(',') if prr.lengtn > 1
+        name : prr[0], prms : prr[1].split(',') if prr.length > 1
+        
         
     getProcessorsCnt: () ->
+        
         pr = @options.settings.process
         if pr then pr.split(";").length else 0
-                
-            
+                            
     proccess: ->
         t = @
         r uri : @options.settings.url, encoding : "binary", httpModule : true,  (error, response, body) -> 
@@ -106,9 +107,16 @@ class ImageProcessor
             
             switch prr.name
                 when "resize"  
-                    gmf.resize(prr.prms[0], prr.prms[1], prr.prms[2]).write TMP_FILE_NAME, (err) ->
-                        if !err then dlg callback, index
-                
+                    if !prr.prms or prr.prms.length < 2 
+                        console.log "prameters for resize not defined, can't resize image"
+                    else 
+                        prr.prms[2] = "%" if prr.prms[2]? and prr.prms[2] == "0"
+                        gmf.resize(prr.prms[0], prr.prms[1], prr.prms[2]).write TMP_FILE_NAME, (err) ->
+                            if !err then dlg callback, index
+                else 
+                    console.log "process #{prr.name} not found"
+                    dlg callback, index
+                    
     sendResponse: (image, mimetype) ->
                 
         opt = @options

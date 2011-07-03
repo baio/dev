@@ -33,7 +33,7 @@
       return {
         url: unescape(req.param("url")),
         callback: req.param("callback"),
-        proccess: req.param("proccess")
+        process: req.param("process")
       };
     };
     ImageProcessor.prototype.getProcessor = function(index) {
@@ -42,7 +42,7 @@
       prr = pr.split('-');
       return {
         name: prr[0],
-        params: prr.lengtn > 1 ? prr[1].split(',') : void 0
+        prms: prr.length > 1 ? prr[1].split(',') : void 0
       };
     };
     ImageProcessor.prototype.getProcessorsCnt = function() {
@@ -106,11 +106,22 @@
         gmf = gm(TMP_FILE_NAME);
         switch (prr.name) {
           case "resize":
-            return gmf.resize(prr.prms[0], prr.prms[1], prr.prms[2]).write(TMP_FILE_NAME, function(err) {
-              if (!err) {
-                return dlg(callback, index);
+            if (!prr.prms || prr.prms.length < 2) {
+              return console.log("prameters for resize not defined, can't resize image");
+            } else {
+              if ((prr.prms[2] != null) && prr.prms[2] === "0") {
+                prr.prms[2] = "%";
               }
-            });
+              return gmf.resize(prr.prms[0], prr.prms[1], prr.prms[2]).write(TMP_FILE_NAME, function(err) {
+                if (!err) {
+                  return dlg(callback, index);
+                }
+              });
+            }
+            break;
+          default:
+            console.log("process " + prr.name + " not found");
+            return dlg(callback, index);
         }
       }
     };
