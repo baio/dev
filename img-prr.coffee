@@ -3,7 +3,26 @@ gm = require 'gm'
 http = require 'http'
 fs = require 'fs'
 r = require 'request'
+#gs960 = require './utils960gs'
 
+class utils960gs
+
+    @getWidth: (colNums) ->
+        colNums * 60 + (colNums - 1) * 20
+
+    @getHeight: (origSize, width) ->
+        Math.floor origSize.height * (width / origSize.width)
+
+    @getSize: (origSize, colNums) ->
+        w = @getWidth colNums
+        h = @getHeight origSize, w
+        width : w, height : h
+
+    @fitSize: (origSize) ->
+        colNums = Math.floor origSize.width / 80
+        colNums = 1 if colNums == 0
+        colNums = 12  if colNums > 12
+        @getSize origSize, colNums
 
 class ImageProcessor
         
@@ -87,56 +106,82 @@ class ImageProcessor
                             fs.readFile TMP_FILE_NAME, (err, data)->
                                   if !err 
                                     t.sendResponse data, mimetype
-            
+                                            
     processImage: (callback, index) ->
         
         #if first opertaion in stack 
-        index ?= @getProcessorsCnt()
+        index ?= @getProcessorsCnt() - 1
+                    
+        prr = @getProcessor index
+                    
+        switch prr.name
+            when "resize"  
+                    @resize prr.prms, callback, index
+            else 
+                @endProcessImage callback, index, "process #{prr.name} not found"
+                
+    endProcessImage: (callback, index, error) ->    
+        if !error 
+            console.log "Image proccess setp #{index} success"
+        else
+            console.log "Image proccess setp #{index} fails:\n#{error}"
         
-        #if last operation in stack
         if index == 0
             callback()
         else        
-            index--
-            
-            dlg = @processImage
-            
-            prr = @getProcessor index
-            
-            gmf = gm TMP_FILE_NAME
-            
-            switch prr.name
-                when "resize"  
-                    if !prr.prms or prr.prms.length < 1 or !prr.prms[0]
-                        console.log "prameters for resize not defined, can't resize image"
-                    else 
-                        width = prr.prms[0]
-                        if !isNaN prr.prms[1]
-                            height = prr.prms[1]
-                            fmt = prr.prms[2]
-                        else
-                            fmt = prr.prms[1]
-                            
-                        height ?= width
-                            
-                        switch fmt
-                            when "%" then break
-                            when "px" then fmt = null
-                            when "960gs" 
-                                #get 960 size
-                                break
-                            else
-                                console.log "format #{fmt} not found will be used px"
-                                fmt = null
+            @processImage callback, index--
 
-                        console.log "width: #{width} height: #{height} format: #{fmt}"
+    
+    resize: (prms, callback, index) ->
+
+        if prms.width
+            #get this call from "960gs" size 
+            width = prms.width
+            height = prms.height
+            fmt = null
+        else            
+            if !prms or prms.length < 1 or !prms[0]
+                @endProcessImage callback, index, "prameters for resize not defined, can't resize image"
+                return
+
+            width = prms[0]
+            
+            if !isNaN prms[1]
+                height = prms[1]
+                fmt = prms[2]
+            else
+                fmt = prms[1]
+                
+            height ?= width
+        
+        t = @
+            
+        switch fmt
+            when "%" then break
+            when "px" then fmt = null
+            when "960gs" 
+                gm(TMP_FILE_NAME).size (err, size) ->
+                    if !err
+                        if width == "fit" 
+                            sz = utils960gs.fitSize size 
+                        else
+                            sz = utils960gs.getSize size, width
                         
-                        gmf.resize(width, height, fmt).write TMP_FILE_NAME, (err) ->
-                            if !err then dlg callback, index
-                else 
-                    console.log "process #{prr.name} not found"
-                    dlg callback, index
-                    
+                        console.log "960gs calculated : width: #{size.width} -> #{sz.width} height: #{size.height} -> #{sz.height}"
+                        
+                        t.resize sz, callback, index
+                    else
+                        t.endProcessImage callback, index, err
+                return;
+            else
+                console.log "format #{fmt} not found will be used px"
+                fmt = null
+
+        console.log "width: #{width} height: #{height} format: #{fmt}"
+                
+        gm(TMP_FILE_NAME).resize(width, height, fmt).write TMP_FILE_NAME, (err) ->
+            t.endProcessImage callback, index, err
+    
     sendResponse: (image, mimetype) ->
                 
         opt = @options

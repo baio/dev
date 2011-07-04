@@ -1,10 +1,40 @@
 (function() {
-  var ImageProcessor, app, express, fs, gm, http, r;
+  var ImageProcessor, app, express, fs, gm, http, r, utils960gs;
   express = require('express');
   gm = require('gm');
   http = require('http');
   fs = require('fs');
   r = require('request');
+  utils960gs = (function() {
+    function utils960gs() {}
+    utils960gs.getWidth = function(colNums) {
+      return colNums * 60 + (colNums - 1) * 20;
+    };
+    utils960gs.getHeight = function(origSize, width) {
+      return Math.floor(origSize.height * (width / origSize.width));
+    };
+    utils960gs.getSize = function(origSize, colNums) {
+      var h, w;
+      w = this.getWidth(colNums);
+      h = this.getHeight(origSize, w);
+      return {
+        width: w,
+        height: h
+      };
+    };
+    utils960gs.fitSize = function(origSize) {
+      var colNums;
+      colNums = Math.floor(origSize.width / 80);
+      if (colNums === 0) {
+        colNums = 1;
+      }
+      if (colNums > 12) {
+        colNums = 12;
+      }
+      return this.getSize(origSize, colNums);
+    };
+    return utils960gs;
+  })();
   ImageProcessor = (function() {
     var TMP_FILE_NAME, options, settings;
     TMP_FILE_NAME = "test.png";
@@ -91,61 +121,87 @@
       }
     };
     ImageProcessor.prototype.processImage = function(callback, index) {
-      var dlg, fmt, gmf, height, prr, width;
+      var prr;
             if (index != null) {
         index;
       } else {
-        index = this.getProcessorsCnt();
+        index = this.getProcessorsCnt() - 1;
       };
+      prr = this.getProcessor(index);
+      switch (prr.name) {
+        case "resize":
+          return this.resize(prr.prms, callback, index);
+        default:
+          return this.endProcessImage(callback, index, "process " + prr.name + " not found");
+      }
+    };
+    ImageProcessor.prototype.endProcessImage = function(callback, index, error) {
+      if (!error) {
+        console.log("Image proccess setp " + index + " success");
+      } else {
+        console.log("Image proccess setp " + index + " fails:\n" + error);
+      }
       if (index === 0) {
         return callback();
       } else {
-        index--;
-        dlg = this.processImage;
-        prr = this.getProcessor(index);
-        gmf = gm(TMP_FILE_NAME);
-        switch (prr.name) {
-          case "resize":
-            if (!prr.prms || prr.prms.length < 1 || !prr.prms[0]) {
-              return console.log("prameters for resize not defined, can't resize image");
-            } else {
-              width = prr.prms[0];
-              if (!isNaN(prr.prms[1])) {
-                height = prr.prms[1];
-                fmt = prr.prms[2];
-              } else {
-                fmt = prr.prms[1];
-              }
-                            if (height != null) {
-                height;
-              } else {
-                height = width;
-              };
-              switch (fmt) {
-                case "%":
-                  break;
-                case "px":
-                  fmt = null;
-                  break;
-                case "960gs":
-                  break;
-                default:
-                  console.log("format " + fmt + " not found will be used px");
-                  fmt = null;
-              }
-              console.log("width: " + width + " height: " + height + " format: " + fmt);
-              return gmf.resize(width, height, fmt).write(TMP_FILE_NAME, function(err) {
-                if (!err) {
-                  return dlg(callback, index);
-                }
-              });
-            }
-            break;
-          default:
-            console.log("process " + prr.name + " not found");
-            return dlg(callback, index);
-        }
+        return this.processImage(callback, index--);
       }
+    };
+    ImageProcessor.prototype.resize = function(prms, callback, index) {
+      var fmt, height, t, width;
+      if (prms.width) {
+        width = prms.width;
+        height = prms.height;
+        fmt = null;
+      } else {
+        if (!prms || prms.length < 1 || !prms[0]) {
+          this.endProcessImage(callback, index, "prameters for resize not defined, can't resize image");
+          return;
+        }
+        width = prms[0];
+        if (!isNaN(prms[1])) {
+          height = prms[1];
+          fmt = prms[2];
+        } else {
+          fmt = prms[1];
+        }
+                if (height != null) {
+          height;
+        } else {
+          height = width;
+        };
+      }
+      t = this;
+      switch (fmt) {
+        case "%":
+          break;
+        case "px":
+          fmt = null;
+          break;
+        case "960gs":
+          gm(TMP_FILE_NAME).size(function(err, size) {
+            var sz;
+            if (!err) {
+              if (width === "fit") {
+                sz = utils960gs.fitSize(size);
+              } else {
+                sz = utils960gs.getSize(size, width);
+              }
+              console.log("960gs calculated : width: " + size.width + " -> " + sz.width + " height: " + size.height + " -> " + sz.height);
+              return t.resize(sz, callback, index);
+            } else {
+              return t.endProcessImage(callback, index, err);
+            }
+          });
+          return;
+        default:
+          console.log("format " + fmt + " not found will be used px");
+          fmt = null;
+      }
+      console.log("width: " + width + " height: " + height + " format: " + fmt);
+      return gm(TMP_FILE_NAME).resize(width, height, fmt).write(TMP_FILE_NAME, function(err) {
+        return t.endProcessImage(callback, index, err);
+      });
     };
     ImageProcessor.prototype.sendResponse = function(image, mimetype) {
       var opt;
