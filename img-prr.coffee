@@ -107,11 +107,31 @@ class ImageProcessor
             
             switch prr.name
                 when "resize"  
-                    if !prr.prms or prr.prms.length < 2 
+                    if !prr.prms or prr.prms.length < 1 or !prr.prms[0]
                         console.log "prameters for resize not defined, can't resize image"
                     else 
-                        prr.prms[2] = "%" if prr.prms[2]? and prr.prms[2] == "0"
-                        gmf.resize(prr.prms[0], prr.prms[1], prr.prms[2]).write TMP_FILE_NAME, (err) ->
+                        width = prr.prms[0]
+                        if !isNaN prr.prms[1]
+                            height = prr.prms[1]
+                            fmt = prr.prms[2]
+                        else
+                            fmt = prr.prms[1]
+                            
+                        height ?= width
+                            
+                        switch fmt
+                            when "%" then break
+                            when "px" then fmt = null
+                            when "960gs" 
+                                #get 960 size
+                                break
+                            else
+                                console.log "format #{fmt} not found will be used px"
+                                fmt = null
+
+                        console.log "width: #{width} height: #{height} format: #{fmt}"
+                        
+                        gmf.resize(width, height, fmt).write TMP_FILE_NAME, (err) ->
                             if !err then dlg callback, index
                 else 
                     console.log "process #{prr.name} not found"

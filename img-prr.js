@@ -91,7 +91,7 @@
       }
     };
     ImageProcessor.prototype.processImage = function(callback, index) {
-      var dlg, gmf, prr;
+      var dlg, fmt, gmf, height, prr, width;
             if (index != null) {
         index;
       } else {
@@ -106,13 +106,35 @@
         gmf = gm(TMP_FILE_NAME);
         switch (prr.name) {
           case "resize":
-            if (!prr.prms || prr.prms.length < 2) {
+            if (!prr.prms || prr.prms.length < 1 || !prr.prms[0]) {
               return console.log("prameters for resize not defined, can't resize image");
             } else {
-              if ((prr.prms[2] != null) && prr.prms[2] === "0") {
-                prr.prms[2] = "%";
+              width = prr.prms[0];
+              if (!isNaN(prr.prms[1])) {
+                height = prr.prms[1];
+                fmt = prr.prms[2];
+              } else {
+                fmt = prr.prms[1];
               }
-              return gmf.resize(prr.prms[0], prr.prms[1], prr.prms[2]).write(TMP_FILE_NAME, function(err) {
+                            if (height != null) {
+                height;
+              } else {
+                height = width;
+              };
+              switch (fmt) {
+                case "%":
+                  break;
+                case "px":
+                  fmt = null;
+                  break;
+                case "960gs":
+                  break;
+                default:
+                  console.log("format " + fmt + " not found will be used px");
+                  fmt = null;
+              }
+              console.log("width: " + width + " height: " + height + " format: " + fmt);
+              return gmf.resize(width, height, fmt).write(TMP_FILE_NAME, function(err) {
                 if (!err) {
                   return dlg(callback, index);
                 }
