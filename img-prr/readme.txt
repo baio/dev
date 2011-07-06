@@ -14,6 +14,7 @@ The consequent porcesses must be separated with ";"
 
 ========================================================
 1.resize
+?resize-{width}[,{height}][,{format}]
 
 ---
 
@@ -25,9 +26,14 @@ if height not defined then height = width
 
 format - % | px (default) | 960gs
 
----
+- for px size in pixels
+- for % percentage of zooming
+- for 960gs width in columns (1..12) see www.960.gs, 
+    the heigth changes proportinally to the width
+    also has special size "fit" in this case size of image wil be fitted to the most
+    suitable for 960 grid (considering to room the whole columns).
 
-?resize-{width}[,{height}][,{format}]
+---
 
 examples : 
 ?resize-100,200,px
@@ -37,12 +43,6 @@ examples :
 ?resize-3,960gs
 ?resize-fit,960gs
 
-- for px size in pixels
-- for % percentage of zooming
-- for 960gs width in columns (1..12) see www.960.gs, 
-    the heigth changes proportinally to the width
-    also has special size "fit" in this case size of image wil be fitted to the most
-    suitable for 960 grid (considering to room the whole columns).
-
+******************************************
 
 ImageProcessor (Client)
