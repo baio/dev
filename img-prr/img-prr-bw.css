@@ -1,0 +1,33 @@
+/* Setup...not important. */
+.img-wrap {
+    width: 500px;
+    margin: 100px auto;
+    position: relative;
+    cursor: pointer;
+}
+
+/* Handles animation of b*w to color */
+canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 1;
+    -webkit-transition: all 1s;
+    -moz-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+    transition: all 1s;
+}
+
+canvas:hover {
+    opacity: 0;
+}
+
+ /* If you MUST have IE support */
+#cvs-src {
+   filter: progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);
+}
+
+#cvs-src:hover {
+    filter: none;
+}

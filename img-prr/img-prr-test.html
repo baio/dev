@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"> 
+<html lang="en"> 
+ 
+	<head> 
+		<meta charset="utf-8"> 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+        <!--<script src="Scripts/jquery.getimagedata.js"></script>-->
+        <script src="img-prr-clt.js"></script>
+        <script src="pixastic.custom.js"></script>
+
+	</head> 
+	
+	<body>
+        <!--
+        <div class="img-wrap">
+            <img id="cvs-src" src="your-image.jpg" />
+            <canvas width=500 height=500></canvas>
+        </div>
+        -->
+		<br style="clear:both"/>
+        <img id="img1" src="http://nodejs.org/logo.png" data-img-prr data-img-prr-process="resize-3,960gs" />
+		<script type="text/javascript">
+            $("[data-img-prr]").imageProcessor(
+                    {
+                        server : "http://maxvm.goip.ru:8087",
+                        success : function(img)
+                        {
+                            $(img).pixastic("desaturate");
+                            $(img).pixastic("blur");
+                        }
+                    }
+            );
+		</script>
+	</body> 
+</html> 
