@@ -28,6 +28,7 @@ class ImageProcessor
         
     TMP_FILE_NAME = "test.png"
     
+    
     settings = 
         
         url : null
