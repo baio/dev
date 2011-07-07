@@ -1,5 +1,6 @@
 (function() {
   var ImageProcessor, app, express, fs, gm, http, r, utils960gs;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   express = require('express');
   gm = require('gm');
   http = require('http');
@@ -85,38 +86,35 @@
       }
     };
     ImageProcessor.prototype.proccess = function() {
-      var t;
-      t = this;
       return r({
         uri: this.options.settings.url,
         encoding: "binary",
         httpModule: true
-      }, function(error, response, body) {
-        t.handleResponse(error, response, body);
+      }, __bind(function(error, response, body) {
+        this.handleResponse(error, response, body);
         return null;
-      });
+      }, this));
     };
     ImageProcessor.prototype.handleResponse = function(error, response, image) {
-      var img, mimetype, t, ws;
+      var img, mimetype, ws;
       if (!error && response.statusCode === 200) {
         mimetype = response.headers["content-type"];
         if (mimetype === "image/gif" || mimetype === "image/jpeg" || mimetype === "image/jpg" || mimetype === "image/png" || mimetype === "image/tiff") {
           ws = fs.createWriteStream(TMP_FILE_NAME, {
             encoding: "binary"
           });
-          t = this;
           img = new Buffer(image.toString(), 'binary');
-          return ws.write(img, function(err, written, buffer) {
+          return ws.write(img, __bind(function(err, written, buffer) {
             if (!err) {
-              return t.processImage(function() {
-                return fs.readFile(TMP_FILE_NAME, function(err, data) {
+              return this.processImage(__bind(function() {
+                return fs.readFile(TMP_FILE_NAME, __bind(function(err, data) {
                   if (!err) {
-                    return t.sendResponse(data, mimetype);
+                    return this.sendResponse(data, mimetype);
                   }
-                });
-              });
+                }, this));
+              }, this));
             }
-          });
+          }, this));
         }
       }
     };
@@ -148,7 +146,7 @@
       }
     };
     ImageProcessor.prototype.resize = function(prms, callback, index) {
-      var fmt, height, t, width;
+      var fmt, height, width;
       if (prms.width) {
         width = prms.width;
         height = prms.height;
@@ -171,7 +169,6 @@
           height = width;
         };
       }
-      t = this;
       switch (fmt) {
         case "%":
           break;
@@ -179,7 +176,7 @@
           fmt = null;
           break;
         case "960gs":
-          gm(TMP_FILE_NAME).size(function(err, size) {
+          gm(TMP_FILE_NAME).size(__bind(function(err, size) {
             var sz;
             if (!err) {
               if (width === "fit") {
@@ -188,20 +185,20 @@
                 sz = utils960gs.getSize(size, width);
               }
               console.log("960gs calculated : width: " + size.width + " -> " + sz.width + " height: " + size.height + " -> " + sz.height);
-              return t.resize(sz, callback, index);
+              return this.resize(sz, callback, index);
             } else {
-              return t.endProcessImage(callback, index, err);
+              return this.endProcessImage(callback, index, err);
             }
-          });
+          }, this));
           return;
         default:
           console.log("format " + fmt + " not found will be used px");
           fmt = null;
       }
       console.log("width: " + width + " height: " + height + " format: " + fmt);
-      return gm(TMP_FILE_NAME).resize(width, height, fmt).write(TMP_FILE_NAME, function(err) {
-        return t.endProcessImage(callback, index, err);
-      });
+      return gm(TMP_FILE_NAME).resize(width, height, fmt).write(TMP_FILE_NAME, __bind(function(err) {
+        return this.endProcessImage(callback, index, err);
+      }, this));
     };
     ImageProcessor.prototype.sendResponse = function(image, mimetype) {
       var opt;

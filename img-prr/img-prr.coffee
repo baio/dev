@@ -77,9 +77,8 @@ class ImageProcessor
         if pr then pr.split(";").length else 0
                             
     proccess: ->
-        t = @
-        r uri : @options.settings.url, encoding : "binary", httpModule : true,  (error, response, body) -> 
-                    t.handleResponse error, response, body   
+        r uri : @options.settings.url, encoding : "binary", httpModule : true,  (error, response, body) => 
+                    @handleResponse error, response, body   
                     null
             
     handleResponse: (error, response, image) ->
@@ -92,20 +91,16 @@ class ImageProcessor
                         mimetype == "image/jpg" or mimetype == "image/png" or mimetype == "image/tiff"
                       
                 ws = fs.createWriteStream TMP_FILE_NAME, encoding : "binary"
-                
-                t = @
-                
+                                
                 img = new Buffer image.toString(), 'binary'
                 
-                ws.write img, (err, written, buffer) -> 
-                    
+                ws.write img, (err, written, buffer) =>
                     if !err
-                        
-                        t.processImage ->
+                        @processImage =>
                             # Get data from file, after proccessing
-                            fs.readFile TMP_FILE_NAME, (err, data)->
-                                  if !err 
-                                    t.sendResponse data, mimetype
+                            fs.readFile TMP_FILE_NAME, (err, data)=>
+                                  if !err
+                                    @sendResponse data, mimetype
                                             
     processImage: (callback, index) ->
         
@@ -153,14 +148,12 @@ class ImageProcessor
                 fmt = prms[1]
                 
             height ?= width
-        
-        t = @
             
         switch fmt
             when "%" then break
             when "px" then fmt = null
             when "960gs" 
-                gm(TMP_FILE_NAME).size (err, size) ->
+                gm(TMP_FILE_NAME).size (err, size) =>
                     if !err
                         if width == "fit" 
                             sz = utils960gs.fitSize size 
@@ -169,9 +162,9 @@ class ImageProcessor
                         
                         console.log "960gs calculated : width: #{size.width} -> #{sz.width} height: #{size.height} -> #{sz.height}"
                         
-                        t.resize sz, callback, index
+                        @resize sz, callback, index
                     else
-                        t.endProcessImage callback, index, err
+                        @endProcessImage callback, index, err
                 return;
             else
                 console.log "format #{fmt} not found will be used px"
@@ -179,8 +172,8 @@ class ImageProcessor
 
         console.log "width: #{width} height: #{height} format: #{fmt}"
                 
-        gm(TMP_FILE_NAME).resize(width, height, fmt).write TMP_FILE_NAME, (err) ->
-            t.endProcessImage callback, index, err
+        gm(TMP_FILE_NAME).resize(width, height, fmt).write TMP_FILE_NAME, (err) =>
+            @endProcessImage callback, index, err
     
     sendResponse: (image, mimetype) ->
                 
