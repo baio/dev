@@ -26,8 +26,7 @@ class utils960gs
 
 class ImageProcessor
         
-    TMP_FILE_NAME = "test.png"
-    
+    TMP_FILE_NAME = null
     
     settings = 
         
@@ -57,12 +56,13 @@ class ImageProcessor
             @options.settings = @getSettings options.request
                         
     getSettings: (req) ->
-                
-        return {
-            url : unescape req.param("url")
-            callback : req.param "callback"
-            process : req.param "process" }
-            
+            url = req.param("url")
+            TMP_FILE_NAME = "/tmp/" + url.substring url.lastIndexOf('/') + 1
+            return {
+                url : url
+                callback : req.param "callback"
+                process : req.param "process" }
+
     getProcessor: (index) ->
         
         pr = @options.settings.process.split(";")[index]

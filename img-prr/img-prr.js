@@ -38,7 +38,7 @@
   })();
   ImageProcessor = (function() {
     var TMP_FILE_NAME, options, settings;
-    TMP_FILE_NAME = "test.png";
+    TMP_FILE_NAME = null;
     settings = {
       url: null,
       callback: null,
@@ -61,8 +61,11 @@
       }
     }
     ImageProcessor.prototype.getSettings = function(req) {
+      var url;
+      url = req.param("url");
+      TMP_FILE_NAME = "/tmp/" + url.substring(url.lastIndexOf('/') + 1);
       return {
-        url: unescape(req.param("url")),
+        url: url,
         callback: req.param("callback"),
         process: req.param("process")
       };
