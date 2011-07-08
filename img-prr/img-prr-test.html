@@ -4,29 +4,23 @@
 	<head> 
 		<meta charset="utf-8"> 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-        <!--<script src="Scripts/jquery.getimagedata.js"></script>-->
         <script src="img-prr-clt.js"></script>
         <script src="pixastic.custom.js"></script>
 
+        <link rel="stylesheet" type="text/css" href="img-prr-animation.css">
 	</head> 
 	
 	<body>
-        <!--
-        <div class="img-wrap">
-            <img id="cvs-src" src="your-image.jpg" />
-            <canvas width=500 height=500></canvas>
-        </div>
-        -->
-		<br style="clear:both"/>
-        <img id="img1" src="http://nodejs.org/logo.png" data-img-prr data-img-prr-process="resize-3,960gs" />
+        <img src="http://nodejs.org/logo.png" />
+        <img src="http://nodejs.org/logo.png" class="img-prr" />
 		<script type="text/javascript">
-            $("[data-img-prr]").imageProcessor(
+            $(".img-prr").imageProcessor(
                     {
                         server : "http://maxvm.goip.ru:8087",
                         success : function(img)
                         {
-                            $(img).pixastic("desaturate");
-                            $(img).pixastic("blur");
+                            var himg = $(img).pixastic("desaturate");
+                            $(himg).addClass("img-prr-animated");
                         }
                     }
             );
