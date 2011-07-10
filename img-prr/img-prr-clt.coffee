@@ -18,6 +18,18 @@ class ImageProcessorPresenter
         if settings.autoLoad
             @load()
 
+    @dataHash: new Array()
+
+    @data: (t, value) ->
+
+        if value 
+            @dataHash[t.id] = value
+
+        return @dataHash[t.id]
+
+    @removeData: (t) ->
+        @dataHash[t.id] = null
+
     load : ->
 
         regex_url_test = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
@@ -124,9 +136,21 @@ $.fn.extend
                 $.extend settings, options
 
             @.each ->
+
                 s = $.extend {}, settings
 
                 $t = $(@)
+
+                orig = $(@).clone()[0]
+                ###
+                    id : @id
+                    name : @name
+                    width : @width
+                    height : @height
+                    src : @src
+                    alt : @alt
+                    style : @style
+                ###
 
                 attr = $t.attr "data-img-prr-server"
 
@@ -167,13 +191,12 @@ $.fn.extend
                 if s.showOnLoad
                     $(s.img).hide()
 
-                data = $t.data "ImageProcessor"
-
-                #bind events here
-                #$t.bind "click.TableHeaderSort", methods.click
+                data = ImageProcessorPresenter.data @ #$t.data "ImageProcessor"
 
                 if !data
-                   $t.data "ImageProcessor", new ImageProcessorPresenter s
+                   ImageProcessorPresenter.data @,
+                        orig : orig
+                        prr : new ImageProcessorPresenter s
 
         destroy: ->
             @.each ->
@@ -184,12 +207,12 @@ $.fn.extend
                  $t.unbind ".ImageProcessor"
 
                  #remove referenced data
-                 data = $t.data "ImageProcessor"
-                 data.ImageProcessor.remove()
-                 $t.removeData "ImageProcessor"
+                 data = ImageProcessorPresenter.data @ #$t.data "ImageProcessor"
 
-        #click: ->
-            #$(@).data("TableHeaderSort").presenter.click()
+                 if data
+                    $t.replaceWith data.orig
+                    ImageProcessorPresenter.removeData @
+
         }
 
     if  methods[method]

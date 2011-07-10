@@ -14,6 +14,16 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
         this.load();
       }
     }
+    ImageProcessorPresenter.dataHash = new Array();
+    ImageProcessorPresenter.data = function(t, value) {
+      if (value) {
+        this.dataHash[t.id] = value;
+      }
+      return this.dataHash[t.id];
+    };
+    ImageProcessorPresenter.removeData = function(t) {
+      return this.dataHash[t.id] = null;
+    };
     ImageProcessorPresenter.prototype.load = function() {
       var is_secure, regex_url_test, s, server_url;
       regex_url_test = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
@@ -100,9 +110,19 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             $.extend(settings, options);
           }
           return this.each(function() {
-            var $t, attr, data, s;
+            var $t, attr, data, orig, s;
             s = $.extend({}, settings);
             $t = $(this);
+            orig = $(this).clone()[0];
+            /*
+                id : @id
+                name : @name
+                width : @width
+                height : @height
+                src : @src
+                alt : @alt
+                style : @style
+            */
             attr = $t.attr("data-img-prr-server");
             if (attr) {
               s.server = attr;
@@ -136,9 +156,12 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             if (s.showOnLoad) {
               $(s.img).hide();
             }
-            data = $t.data("ImageProcessor");
+            data = ImageProcessorPresenter.data(this);
             if (!data) {
-              return $t.data("ImageProcessor", new ImageProcessorPresenter(s));
+              return ImageProcessorPresenter.data(this, {
+                orig: orig,
+                prr: new ImageProcessorPresenter(s)
+              });
             }
           });
         },
@@ -147,9 +170,11 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             var $t, data;
             $t = $(this);
             $t.unbind(".ImageProcessor");
-            data = $t.data("ImageProcessor");
-            data.ImageProcessor.remove();
-            return $t.removeData("ImageProcessor");
+            data = ImageProcessorPresenter.data(this);
+            if (data) {
+              $t.replaceWith(data.orig);
+              return ImageProcessorPresenter.removeData(this);
+            }
           });
         }
       };
