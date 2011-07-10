@@ -21,35 +21,11 @@
 
                         process : "resize-3,960gs",
 
-                        animateClass : "img-prr-animated",
+                        animateCss : "img-prr-animated",
 
                         success : function(img)
                         {
-                            return $(img).pixastic("desaturate");//.pixastic("emboss", {greyLevel:100,direction:"topright"})
-                            /*
-                            $(img).show();
-
-                            var newImg = new Image();
-
-                            newImg.src = img.src;
-                            newImg.width = img.width;
-                            newImg.height = img.height;
-
-
-                            $(img).after($(newImg));
-
-                            var himg = $(newImg).pixastic("desaturate").pixastic("emboss", {greyLevel:100,direction:"topright"});
-
-                            $(himg).position({
-                                of : $(img),
-                                at : "left top",
-                                my : "left top"
-                            });
-
-                            setInterval(function(){
-                                $(himg).addClass("img-prr-animated");
-                            }, 1);
-                            */
+                            return $(img).pixastic("desaturate");
                         }
                     }
             );

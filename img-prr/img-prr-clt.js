@@ -38,7 +38,7 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
               this.width = data.width;
               this.height = data.height;
               img = this;
-              if (s.animateClass) {
+              if (s.animateCss) {
                 newImg = new Image();
                 $(newImg).attr({
                   src: img.src,
@@ -52,14 +52,14 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
               if ($.isFunction(s.success)) {
                 img = s.success(img);
                 if (img) {
-                  if (s.animateClass) {
+                  if (s.animateCss) {
                     $(img).position({
                       of: $(this),
                       at: "left top",
                       my: "left top"
                     });
                     return setInterval(function() {
-                      return $(img).addClass("img-prr-animated");
+                      return $(img).addClass(s.animateCss);
                     }, 1);
                   }
                 }
@@ -90,7 +90,7 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
         img: null,
         autoLoad: true,
         showOnLoad: true,
-        animateClass: null,
+        animateCss: null,
         success: null,
         error: null
       };

@@ -48,7 +48,7 @@ class ImageProcessorPresenter
 
                             img = @
 
-                            if s.animateClass
+                            if s.animateCss
 
                                 newImg = new Image()
                                 $(newImg).attr
@@ -68,14 +68,14 @@ class ImageProcessorPresenter
                                 if img
 
                                     #lay over animate canvas
-                                    if s.animateClass
+                                    if s.animateCss
                                           $(img).position
                                                 of : $(@),
                                                 at : "left top"
                                                 my : "left top"
 
                                             setInterval( ->
-                                                     $(img).addClass "img-prr-animated"
+                                                     $(img).addClass s.animateCss
                                                 , 1)
 
                     ).attr 'src', data.data
@@ -109,7 +109,7 @@ $.fn.extend
 
         showOnLoad : true
 
-        animateClass : null
+        animateCss : null
 
         success : null
 
