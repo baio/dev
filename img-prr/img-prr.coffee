@@ -103,10 +103,14 @@ class ImageProcessor
                                   if !err
                                     @sendResponse data, mimetype
                                             
-    processImage: (callback, index) ->
+    processImage: (callback, idx) ->
         
         #if first opertaion in stack 
-        index ?= @getProcessorsCnt() - 1
+        
+        index = if idx? then idx else @getProcessorsCnt() - 1 
+        
+        if index == -1
+            return @endProcessImage callback, index
                     
         prr = @getProcessor index
                     
@@ -122,7 +126,7 @@ class ImageProcessor
         else
             console.log "Image proccess setp #{index} fails:\n#{error}"
         
-        if index == 0
+        if index < 1
             callback()
         else        
             @processImage callback, index--

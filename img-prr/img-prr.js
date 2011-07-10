@@ -121,13 +121,12 @@
         }
       }
     };
-    ImageProcessor.prototype.processImage = function(callback, index) {
-      var prr;
-            if (index != null) {
-        index;
-      } else {
-        index = this.getProcessorsCnt() - 1;
-      };
+    ImageProcessor.prototype.processImage = function(callback, idx) {
+      var index, prr;
+      index = idx != null ? idx : this.getProcessorsCnt() - 1;
+      if (index === -1) {
+        return this.endProcessImage(callback, index);
+      }
       prr = this.getProcessor(index);
       switch (prr.name) {
         case "resize":
@@ -142,7 +141,7 @@
       } else {
         console.log("Image proccess setp " + index + " fails:\n" + error);
       }
-      if (index === 0) {
+      if (index < 1) {
         return callback();
       } else {
         return this.processImage(callback, index--);
