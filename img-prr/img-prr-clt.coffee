@@ -18,6 +18,18 @@ class ImageProcessorPresenter
         if settings.autoLoad
             @load()
 
+    @dataHash: new Array()
+
+    @data: (t, value) ->
+
+        if value 
+            @dataHash[t.id] = value
+
+        return @dataHash[t.id]
+
+    @removeData: (t) ->
+        @dataHash[t.id] = null
+
     load : ->
 
         regex_url_test = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
@@ -41,23 +53,46 @@ class ImageProcessorPresenter
                 dataType: 'jsonp'
                 timeout: 10000
                 success: (data, status) ->
+                    $(s.img).load( ->
 
-                    #Create new, empty image
-                    img = if s.img then s.img else new Image()
+                            @width = data.width
+                            @height = data.height
 
-                    #When the image has loaded
+                            img = @
 
-                    $(img).load( ->
+                            if s.animateCss
 
-                        @width = data.width
-                        @height = data.height
+                                newImg = new Image()
+                                $(newImg).attr
+                                    src : img.src
+                                    width : img.width
+                                    height : img.height
 
-                        #Return the image
-                        if $.isFunction s.success
-                            s.success @
+                                $(@).after newImg
+                                img = newImg
+
+                            $(@).show()
+
+                            if $.isFunction s.success
+
+                                img = s.success img
+
+                                if img
+
+                                    #lay over animate canvas
+                                    if s.animateCss
+                                          $(img).position
+                                                of : $(@),
+                                                at : "left top"
+                                                my : "left top"
+
+                                            setInterval( ->
+                                                     $(img).addClass s.animateCss
+                                                , 1)
+
+                                ImageProcessorPresenter.data(@).animateImg = img
 
                     ).attr 'src', data.data
-
 
                 # Something went wrong..
                 error: (xhr, text_status)->
@@ -86,7 +121,14 @@ $.fn.extend
 
         autoLoad : true
 
-        loadToOrig : true
+        showOnLoad : true
+
+        animateCss : null
+
+        success : null
+
+        error : null
+       
 
     methods = {
 
@@ -96,9 +138,21 @@ $.fn.extend
                 $.extend settings, options
 
             @.each ->
+
                 s = $.extend {}, settings
 
                 $t = $(@)
+
+                orig = $(@).clone()[0]
+                ###
+                    id : @id
+                    name : @name
+                    width : @width
+                    height : @height
+                    src : @src
+                    alt : @alt
+                    style : @style
+                ###
 
                 attr = $t.attr "data-img-prr-server"
 
@@ -129,39 +183,33 @@ $.fn.extend
                 if attr
                     s.autoLoad = new Boolean attr
 
-                if !s.img
+                s.img = @
 
-                    attr = $t.attr "data-img-prr-load-to-orig"
+                attr = $t.attr "data-img-prr-show-on-load"
 
-                    if attr
-                        s.loadToOrig = new Boolean attr
+                if attr
+                    s.showOnLoad = new Boolean attr
 
-                    if s.loadToOrig
-                        s.img = @
+                if s.showOnLoad
+                    $(s.img).hide()
 
-                data = $t.data "ImageProcessor"
-
-                #bind events here
-                #$t.bind "click.TableHeaderSort", methods.click
+                data = ImageProcessorPresenter.data @
 
                 if !data
-                   $t.data "ImageProcessor", new ImageProcessorPresenter s
+                   ImageProcessorPresenter.data @,
+                        orig : orig
+                        prr : new ImageProcessorPresenter s
 
         destroy: ->
             @.each ->
+                 data = ImageProcessorPresenter.data @
 
-                 $t = $(@)
+                 if data
+                    if data.animateImg
+                        $(data.animateImg).remove()
+                    $(@).replaceWith data.orig
+                    ImageProcessorPresenter.removeData @
 
-                 #unbind events
-                 $t.unbind ".ImageProcessor"
-
-                 #remove referenced data
-                 data = $t.data "ImageProcessor"
-                 data.ImageProcessor.remove()
-                 $t.removeData "ImageProcessor"
-
-        #click: ->
-            #$(@).data("TableHeaderSort").presenter.click()
         }
 
     if  methods[method]

@@ -14,6 +14,16 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
         this.load();
       }
     }
+    ImageProcessorPresenter.dataHash = new Array();
+    ImageProcessorPresenter.data = function(t, value) {
+      if (value) {
+        this.dataHash[t.id] = value;
+      }
+      return this.dataHash[t.id];
+    };
+    ImageProcessorPresenter.removeData = function(t) {
+      return this.dataHash[t.id] = null;
+    };
     ImageProcessorPresenter.prototype.load = function() {
       var is_secure, regex_url_test, s, server_url;
       regex_url_test = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
@@ -33,13 +43,37 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
           dataType: 'jsonp',
           timeout: 10000,
           success: function(data, status) {
-            var img;
-            img = s.img ? s.img : new Image();
-            return $(img).load(function() {
+            return $(s.img).load(function() {
+              var img, newImg;
               this.width = data.width;
               this.height = data.height;
+              img = this;
+              if (s.animateCss) {
+                newImg = new Image();
+                $(newImg).attr({
+                  src: img.src,
+                  width: img.width,
+                  height: img.height
+                });
+                $(this).after(newImg);
+                img = newImg;
+              }
+              $(this).show();
               if ($.isFunction(s.success)) {
-                return s.success(this);
+                img = s.success(img);
+                if (img) {
+                  if (s.animateCss) {
+                    $(img).position({
+                      of: $(this),
+                      at: "left top",
+                      my: "left top"
+                    });
+                    setInterval(function() {
+                      return $(img).addClass(s.animateCss);
+                    }, 1);
+                  }
+                }
+                return ImageProcessorPresenter.data(this).animateImg = img;
               }
             }).attr('src', data.data);
           },
@@ -66,7 +100,10 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
         process: null,
         img: null,
         autoLoad: true,
-        loadToOrig: true
+        showOnLoad: true,
+        animateCss: null,
+        success: null,
+        error: null
       };
       methods = {
         init: function(options) {
@@ -74,9 +111,19 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             $.extend(settings, options);
           }
           return this.each(function() {
-            var $t, attr, data, s;
+            var $t, attr, data, orig, s;
             s = $.extend({}, settings);
             $t = $(this);
+            orig = $(this).clone()[0];
+            /*
+                id : @id
+                name : @name
+                width : @width
+                height : @height
+                src : @src
+                alt : @alt
+                style : @style
+            */
             attr = $t.attr("data-img-prr-server");
             if (attr) {
               s.server = attr;
@@ -102,29 +149,34 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             if (attr) {
               s.autoLoad = new Boolean(attr);
             }
-            if (!s.img) {
-              attr = $t.attr("data-img-prr-load-to-orig");
-              if (attr) {
-                s.loadToOrig = new Boolean(attr);
-              }
-              if (s.loadToOrig) {
-                s.img = this;
-              }
+            s.img = this;
+            attr = $t.attr("data-img-prr-show-on-load");
+            if (attr) {
+              s.showOnLoad = new Boolean(attr);
             }
-            data = $t.data("ImageProcessor");
+            if (s.showOnLoad) {
+              $(s.img).hide();
+            }
+            data = ImageProcessorPresenter.data(this);
             if (!data) {
-              return $t.data("ImageProcessor", new ImageProcessorPresenter(s));
+              return ImageProcessorPresenter.data(this, {
+                orig: orig,
+                prr: new ImageProcessorPresenter(s)
+              });
             }
           });
         },
         destroy: function() {
           return this.each(function() {
-            var $t, data;
-            $t = $(this);
-            $t.unbind(".ImageProcessor");
-            data = $t.data("ImageProcessor");
-            data.ImageProcessor.remove();
-            return $t.removeData("ImageProcessor");
+            var data;
+            data = ImageProcessorPresenter.data(this);
+            if (data) {
+              if (data.animateImg) {
+                $(data.animateImg).remove();
+              }
+              $(this).replaceWith(data.orig);
+              return ImageProcessorPresenter.removeData(this);
+            }
           });
         }
       };
