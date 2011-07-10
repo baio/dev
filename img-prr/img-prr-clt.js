@@ -80,6 +80,7 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
         img: null,
         autoLoad: true,
         loadToOrig: true,
+        showOnLoad: true,
         animateClass: null,
         success: null,
         error: null
@@ -126,6 +127,13 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
               if (s.loadToOrig) {
                 s.img = this;
               }
+            }
+            attr = $t.attr("data-img-prr-show-on-load");
+            if (attr) {
+              s.showOnLoad = new Boolean(attr);
+            }
+            if (s.showOnLoad) {
+              $(s.img).hide();
             }
             data = $t.data("ImageProcessor");
             if (!data) {

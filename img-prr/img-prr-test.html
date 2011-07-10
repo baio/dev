@@ -19,11 +19,15 @@
                     {
                         server : "http://maxvm.goip.ru:8087",
 
+                        process : "resize-3,960gs",
+
                         success : function(img)
                         {
-                            var himg = $(img).pixastic("desaturate");
+                            $(img).show();
 
-                            /*
+                            var himg = $(img).pixastic("desaturate").pixastic("emboss", {greyLevel:100,direction:"topright"});
+
+                            
                             $(himg).position({
                                 of : $("#src-img"),
                                 at : "left top",
@@ -33,7 +37,6 @@
                             setInterval(function(){
                                 $(himg).addClass("img-prr-animated");
                             }, 1);
-                            */
                         }
                     }
             );

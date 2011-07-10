@@ -68,6 +68,8 @@ class ImageProcessorPresenter
                             if $.isFunction s.success
                                 s.success @
 
+                            #$(@).show()
+
                     ).attr 'src', data.data
 
                 # Something went wrong..
@@ -97,7 +99,7 @@ $.fn.extend
 
         autoLoad : true
 
-        loadToOrig : true
+        showOnLoad : true
 
         animateClass : null
 
@@ -147,16 +149,15 @@ $.fn.extend
                 if attr
                     s.autoLoad = new Boolean attr
 
-                if !s.img
+                s.img = @
 
-                    attr = $t.attr "data-img-prr-load-to-orig"
+                attr = $t.attr "data-img-prr-show-on-load"
 
-                    if attr
-                        s.loadToOrig = new Boolean attr
+                if attr
+                    s.showOnLoad = new Boolean attr
 
-                    if s.loadToOrig
-                        s.img = @
-                        
+                if s.showOnLoad
+                    $(s.img).hide()
 
                 data = $t.data "ImageProcessor"
 
