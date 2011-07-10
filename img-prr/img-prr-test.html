@@ -4,23 +4,34 @@
 	<head> 
 		<meta charset="utf-8"> 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js" type="text/javascript"></script>
         <script src="img-prr-clt.js"></script>
         <script src="pixastic.custom.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="img-prr-animation.css">
+        <link rel="stylesheet" type="text/css" href="img-prr-animate.css">
 	</head> 
 	
 	<body>
-        <img src="http://nodejs.org/logo.png" />
-        <img src="http://nodejs.org/logo.png" class="img-prr" />
+        <img src="http://nodejs.org/logo.png" id="src-img"/>
+        <img src="http://nodejs.org/logo.png" class="img-prr"/>
 		<script type="text/javascript">
             $(".img-prr").imageProcessor(
                     {
                         server : "http://maxvm.goip.ru:8087",
+
                         success : function(img)
                         {
                             var himg = $(img).pixastic("desaturate");
-                            $(himg).addClass("img-prr-animated");
+
+                            $(himg).position({
+                                of : $("#src-img"),
+                                at : "left top",
+                                my : "left top"
+                            });
+
+                            setInterval(function(){
+                                $(himg).addClass("img-prr-animated");
+                            }, 1);
                         }
                     }
             );

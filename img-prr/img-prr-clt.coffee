@@ -42,22 +42,33 @@ class ImageProcessorPresenter
                 timeout: 10000
                 success: (data, status) ->
 
-                    #Create new, empty image
-                    img = if s.img then s.img else new Image()
+                    if s.animateClass
+                        img = new Image()
+                        if s.animateClass
+
+                            $(img).attr
+                                position : "absolute"
+                                left : @left
+                                top : @top
+                                class : s.animateClass
+
+                            $(s.img).after img
+                    else
+                        #Create new, empty image
+                        img = if s.img then s.img else new Image()
 
                     #When the image has loaded
 
                     $(img).load( ->
 
-                        @width = data.width
-                        @height = data.height
+                            @width = data.width
+                            @height = data.height
 
-                        #Return the image
-                        if $.isFunction s.success
-                            s.success @
+                            #Return the image
+                            if $.isFunction s.success
+                                s.success @
 
                     ).attr 'src', data.data
-
 
                 # Something went wrong..
                 error: (xhr, text_status)->
@@ -87,6 +98,13 @@ $.fn.extend
         autoLoad : true
 
         loadToOrig : true
+
+        animateClass : null
+
+        success : null
+
+        error : null
+       
 
     methods = {
 
@@ -138,6 +156,7 @@ $.fn.extend
 
                     if s.loadToOrig
                         s.img = @
+                        
 
                 data = $t.data "ImageProcessor"
 

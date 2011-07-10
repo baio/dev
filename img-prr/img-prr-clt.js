@@ -34,7 +34,20 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
           timeout: 10000,
           success: function(data, status) {
             var img;
-            img = s.img ? s.img : new Image();
+            if (s.animateClass) {
+              img = new Image();
+              if (s.animateClass) {
+                $(img).attr({
+                  position: "absolute",
+                  left: this.left,
+                  top: this.top,
+                  "class": s.animateClass
+                });
+                $(s.img).after(img);
+              }
+            } else {
+              img = s.img ? s.img : new Image();
+            }
             return $(img).load(function() {
               this.width = data.width;
               this.height = data.height;
@@ -66,7 +79,10 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
         process: null,
         img: null,
         autoLoad: true,
-        loadToOrig: true
+        loadToOrig: true,
+        animateClass: null,
+        success: null,
+        error: null
       };
       methods = {
         init: function(options) {
