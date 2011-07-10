@@ -90,6 +90,8 @@ class ImageProcessorPresenter
                                                      $(img).addClass s.animateCss
                                                 , 1)
 
+                                ImageProcessorPresenter.data(@).animateImg = img
+
                     ).attr 'src', data.data
 
                 # Something went wrong..
@@ -191,7 +193,7 @@ $.fn.extend
                 if s.showOnLoad
                     $(s.img).hide()
 
-                data = ImageProcessorPresenter.data @ #$t.data "ImageProcessor"
+                data = ImageProcessorPresenter.data @
 
                 if !data
                    ImageProcessorPresenter.data @,
@@ -200,17 +202,12 @@ $.fn.extend
 
         destroy: ->
             @.each ->
-
-                 $t = $(@)
-
-                 #unbind events
-                 $t.unbind ".ImageProcessor"
-
-                 #remove referenced data
-                 data = ImageProcessorPresenter.data @ #$t.data "ImageProcessor"
+                 data = ImageProcessorPresenter.data @
 
                  if data
-                    $t.replaceWith data.orig
+                    if data.animateImg
+                        $(data.animateImg).remove()
+                    $(@).replaceWith data.orig
                     ImageProcessorPresenter.removeData @
 
         }

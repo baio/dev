@@ -68,11 +68,12 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
                       at: "left top",
                       my: "left top"
                     });
-                    return setInterval(function() {
+                    setInterval(function() {
                       return $(img).addClass(s.animateCss);
                     }, 1);
                   }
                 }
+                return ImageProcessorPresenter.data(this).animateImg = img;
               }
             }).attr('src', data.data);
           },
@@ -167,12 +168,13 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
         },
         destroy: function() {
           return this.each(function() {
-            var $t, data;
-            $t = $(this);
-            $t.unbind(".ImageProcessor");
+            var data;
             data = ImageProcessorPresenter.data(this);
             if (data) {
-              $t.replaceWith(data.orig);
+              if (data.animateImg) {
+                $(data.animateImg).remove();
+              }
+              $(this).replaceWith(data.orig);
               return ImageProcessorPresenter.removeData(this);
             }
           });
