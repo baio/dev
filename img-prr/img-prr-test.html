@@ -6,6 +6,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js" type="text/javascript"></script>
         <script src="img-prr-clt.js"></script>
+        <script src="img-prr-test.js"></script>
         <script src="pixastic.custom.js"></script>
         <link rel="stylesheet" type="text/css" href="img-prr-animate.css">
         <style type="text/css">
@@ -17,18 +18,32 @@
 	</head> 
 	
 	<body>
-    <form action="get">Image url: <input style="width:100%" type="text"><input type="button" value="process it!"></form>
+    Image url:
+    <input style="width:100%" type="text" value="http://www.wikinoticia.com/images/elgeeky.com/elgeeky.com.wp-content.south.jpg" id="img_url"/>
+    <button id="img_process"/>process it!</button>
     <div width="100%">
         <div style="float: left">
-            Source image:<br/>
-            <img src="" alt="source image">
-         </div>
-        <div style="float: left">
-            Processed image:<br/>
-            <img src="" alt="source image">
+            <div >
+                Source image:<br/>
+                <img src="" alt="source image" id="img_src"/>
+             </div>
+            <div >
+                Processed image:<br/>
+                <img src="" alt="source image" id="img_dest"/>
+            </div>
         </div>
         <div style="float: right">
-            <table style="text-align: right">
+            <ul>
+                <li>1st checkbox - process on server
+                <li>2nd checkbox - process on client
+                <li>
+                    text box - parameters depends on where processed
+                    <ul>
+                        <li><a href ="http://www.pixastic.com/lib/docs/" target="_blank">client params</a>
+                        <li><a href ="https://github.com/aheckmann/gm/tree/master/examples" target="_blank">server params</a>
+                    </ul>
+            </ul>
+            <table style="text-align: right" id="params">
                 <tr>
                     <td>bitdepth<input type="checkbox"><input type="checkbox"></td>
                     <td><input type="text"></td>
@@ -71,6 +86,10 @@
                 </tr>
                 <tr>
                     <td>despeckle<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>desaturate<input checked type="checkbox"><input type="checkbox"></td>
                     <td><input type="text"></td>
                 </tr>
                 <tr>
@@ -174,8 +193,8 @@
                     <td><input type="text"></td>
                 </tr>
                 <tr>
-                    <td>resize<input type="checkbox"><input type="checkbox"></td>
-                    <td><input type="text"></td>
+                    <td>resize<input type="checkbox"><input checked type="checkbox"></td>
+                    <td><input type="text" value="300,px"></td>
                 </tr>
                 <tr>
                     <td>roll<input type="checkbox"><input type="checkbox"></td>
