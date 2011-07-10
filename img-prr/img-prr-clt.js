@@ -33,26 +33,36 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
           dataType: 'jsonp',
           timeout: 10000,
           success: function(data, status) {
-            var img;
-            if (s.animateClass) {
-              img = new Image();
-              if (s.animateClass) {
-                $(img).attr({
-                  position: "absolute",
-                  left: this.left,
-                  top: this.top,
-                  "class": s.animateClass
-                });
-                $(s.img).after(img);
-              }
-            } else {
-              img = s.img ? s.img : new Image();
-            }
-            return $(img).load(function() {
+            return $(s.img).load(function() {
+              var img, newImg;
               this.width = data.width;
               this.height = data.height;
+              img = this;
+              if (s.animateClass) {
+                newImg = new Image();
+                $(newImg).attr({
+                  src: img.src,
+                  width: img.width,
+                  height: img.height
+                });
+                $(this).after(newImg);
+                img = newImg;
+              }
+              $(this).show();
               if ($.isFunction(s.success)) {
-                return s.success(this);
+                img = s.success(img);
+                if (img) {
+                  if (s.animateClass) {
+                    $(img).position({
+                      of: $(this),
+                      at: "left top",
+                      my: "left top"
+                    });
+                    return setInterval(function() {
+                      return $(img).addClass("img-prr-animated");
+                    }, 1);
+                  }
+                }
               }
             }).attr('src', data.data);
           },
@@ -79,7 +89,6 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
         process: null,
         img: null,
         autoLoad: true,
-        loadToOrig: true,
         showOnLoad: true,
         animateClass: null,
         success: null,
@@ -119,15 +128,7 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             if (attr) {
               s.autoLoad = new Boolean(attr);
             }
-            if (!s.img) {
-              attr = $t.attr("data-img-prr-load-to-orig");
-              if (attr) {
-                s.loadToOrig = new Boolean(attr);
-              }
-              if (s.loadToOrig) {
-                s.img = this;
-              }
-            }
+            s.img = this;
             attr = $t.attr("data-img-prr-show-on-load");
             if (attr) {
               s.showOnLoad = new Boolean(attr);

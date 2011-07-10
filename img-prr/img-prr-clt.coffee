@@ -41,34 +41,42 @@ class ImageProcessorPresenter
                 dataType: 'jsonp'
                 timeout: 10000
                 success: (data, status) ->
-
-                    if s.animateClass
-                        img = new Image()
-                        if s.animateClass
-
-                            $(img).attr
-                                position : "absolute"
-                                left : @left
-                                top : @top
-                                class : s.animateClass
-
-                            $(s.img).after img
-                    else
-                        #Create new, empty image
-                        img = if s.img then s.img else new Image()
-
-                    #When the image has loaded
-
-                    $(img).load( ->
+                    $(s.img).load( ->
 
                             @width = data.width
                             @height = data.height
 
-                            #Return the image
-                            if $.isFunction s.success
-                                s.success @
+                            img = @
 
-                            #$(@).show()
+                            if s.animateClass
+
+                                newImg = new Image()
+                                $(newImg).attr
+                                    src : img.src
+                                    width : img.width
+                                    height : img.height
+
+                                $(@).after newImg
+                                img = newImg
+
+                            $(@).show()
+
+                            if $.isFunction s.success
+
+                                img = s.success img
+
+                                if img
+
+                                    #lay over animate canvas
+                                    if s.animateClass
+                                          $(img).position
+                                                of : $(@),
+                                                at : "left top"
+                                                my : "left top"
+
+                                            setInterval( ->
+                                                     $(img).addClass "img-prr-animated"
+                                                , 1)
 
                     ).attr 'src', data.data
 
