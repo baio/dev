@@ -7,11 +7,216 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js" type="text/javascript"></script>
         <script src="img-prr-clt.js"></script>
         <script src="pixastic.custom.js"></script>
-
         <link rel="stylesheet" type="text/css" href="img-prr-animate.css">
+        <style type="text/css">
+            div
+            {
+                border-style:dotted;
+            }
+        </style>
 	</head> 
 	
 	<body>
+    <form action="get">Image url: <input style="width:100%" type="text"><input type="button" value="process it!"></form>
+    <div width="100%">
+        <div style="float: left">
+            Source image:<br/>
+            <img src="" alt="source image">
+         </div>
+        <div style="float: left">
+            Processed image:<br/>
+            <img src="" alt="source image">
+        </div>
+        <div style="float: right">
+            <table style="text-align: right">
+                <tr>
+                    <td>bitdepth<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>blur<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>charcoal<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>chop<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>colorize<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>colors<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>comment<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>contrast<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>crop<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>cycle<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>despeckle<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>dither<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>edge<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>emboss<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>enchance<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>equalize<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>flip<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>flop<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>gamma<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>getters<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>implode<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>label<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>limit<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>lower<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>magnify<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>median<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>minify<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>modulate<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>monochrome<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>morph<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>negative<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>noise1<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>noise2<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>quality<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>raise<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>region<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>resize<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>roll<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>rotate<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>scale<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>sepia<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>sharpen<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>solarize<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>spread<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>swirl<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+                <tr>
+                    <td>thumb<input type="checkbox"><input type="checkbox"></td>
+                    <td><input type="text"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!--
         <img src="http://nodejs.org/logo.png" id="src-img"/>
         <img src="http://nodejs.org/logo.png" class="img-prr"/>
 		<script type="text/javascript">
@@ -30,5 +235,6 @@
                     }
             );
 		</script>
+    -->
 	</body> 
 </html> 
