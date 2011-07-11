@@ -80,10 +80,15 @@
       };
     };
     ImageProcessor.prototype.getProcessorsCnt = function() {
-      var pr;
+      var arr, pr;
       pr = this.options.settings.process;
       if (pr) {
-        return pr.split(";").length;
+        arr = pr.split(";");
+        if (arr[arr.length - 1]) {
+          return arr.length;
+        } else {
+          return arr.length - 1;
+        }
       } else {
         return 0;
       }
@@ -91,8 +96,7 @@
     ImageProcessor.prototype.proccess = function() {
       return r({
         uri: this.options.settings.url,
-        encoding: "binary",
-        httpModule: true
+        encoding: "binary"
       }, __bind(function(error, response, body) {
         this.handleResponse(error, response, body);
         return null;
@@ -121,17 +125,22 @@
         }
       }
     };
-    ImageProcessor.prototype.processImage = function(callback, index) {
-      var prr;
-            if (index != null) {
-        index;
-      } else {
-        index = this.getProcessorsCnt() - 1;
-      };
+    ImageProcessor.prototype.processImage = function(callback, idx) {
+      var index, prr;
+      index = idx != null ? idx : this.getProcessorsCnt() - 1;
+      if (index === -1) {
+        return this.endProcessImage(callback, index);
+      }
       prr = this.getProcessor(index);
       switch (prr.name) {
         case "resize":
           return this.resize(prr.prms, callback, index);
+        case "bitdepth":
+          return this.processing("bitdepth", prr.prms, callback, index);
+        case "blur":
+          return this.processing("blur", prr.prms, callback, index);
+        case "charcoal":
+          return this.processing("charcoal", prr.prms, callback, index);
         default:
           return this.endProcessImage(callback, index, "process " + prr.name + " not found");
       }
@@ -142,10 +151,49 @@
       } else {
         console.log("Image proccess setp " + index + " fails:\n" + error);
       }
-      if (index === 0) {
+      if (index < 1) {
         return callback();
       } else {
-        return this.processImage(callback, index--);
+        return this.processImage(callback, --index);
+      }
+    };
+    /*
+        bitdepth: (prms, callback, index) ->
+                if !prms or prms.length < 1 or !prms[0]
+                    @endProcessImage callback, index, "prameters for bitdepth not defined, bitdepth can't be processed"
+                    return
+                    
+                gm(TMP_FILE_NAME).bitdepth(prms[0]).write TMP_FILE_NAME, (err) =>
+                    @endProcessImage callback, index, err
+    
+        blur: (prms, callback, index) ->
+                if !prms or prms.length < 2 or !prms[0] or !prms[1]
+                    @endProcessImage callback, index, "prameters for blur not defined, blur can't be processed"
+                    return
+            
+                gm(TMP_FILE_NAME).blur(prms[0], prms[1]).write TMP_FILE_NAME, (err) =>
+                    @endProcessImage callback, index, err
+    
+    
+        charcoal: (prms, callback, index) ->
+            processOperation "charcoal", 1, prms, index    
+        */
+    ImageProcessor.prototype.processing = function(processName, prms, callback, index) {
+      /*
+                  for prm in [0..prmsCnt-1]
+                      if not prm? 
+                          @endProcessImage callback, index, "prameters for #{processName} not defined, #{processName} can't be processed"
+                          return
+                  */      var func, g;
+      try {
+        console.log("processing " + processName);
+        g = gm(TMP_FILE_NAME);
+        func = eval("g." + processName);
+        return func.apply(g, prms).write(TMP_FILE_NAME, __bind(function(err) {
+          return this.endProcessImage(callback, index, err);
+        }, this));
+      } catch (msg) {
+        return this.endProcessImage(callback, index, "process " + processName + " failed with error " + msg);
       }
     };
     ImageProcessor.prototype.resize = function(prms, callback, index) {

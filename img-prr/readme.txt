@@ -12,6 +12,10 @@ name_of_process[-params];
 
 The consequent porcesses must be separated with ";"
 
+The processes and parameters could be seen here
+http://www.graphicsmagick.org/Magick++/Image.html#manipulate-an-image
+https://github.com/aheckmann/gm/tree/master/examples
+
 ========================================================
 1.resize
 ?resize-{width}[,{height}][,{format}]
@@ -46,26 +50,3 @@ examples :
 ******************************************
 
 ImageProcessor (Client)
-
-
-src : null
-
-server : null
-
-process : null
-
-img : null
-
-autoLoad : true
-
-loadToOrig : true
-the image will be loaded to the source img element
-
-showOnLoad : true
-the image will be shown only after data loading
-
-animateClass : null
-
-success : null
-
-error : null
