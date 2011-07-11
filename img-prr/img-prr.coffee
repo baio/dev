@@ -75,10 +75,14 @@ class ImageProcessor
     getProcessorsCnt: () ->
         
         pr = @options.settings.process
-        if pr then pr.split(";").length else 0
+        if pr 
+            arr = pr.split(";")
+            return if arr[arr.length - 1] then arr.length else arr.length - 1
+        else 
+            0
                             
     proccess: ->
-        r uri : @options.settings.url, encoding : "binary", httpModule : true,  (error, response, body) => 
+        r uri : @options.settings.url, encoding : "binary",  (error, response, body) => 
                     @handleResponse error, response, body   
                     null
             
@@ -117,6 +121,8 @@ class ImageProcessor
         switch prr.name
             when "resize"  
                     @resize prr.prms, callback, index
+            when "bitdepth"  
+                    @bitdepth prr.prms, callback, index
             else 
                 @endProcessImage callback, index, "process #{prr.name} not found"
                 
@@ -129,9 +135,19 @@ class ImageProcessor
         if index < 1
             callback()
         else        
-            @processImage callback, index--
+            @processImage callback, --index
+            
+        
+            
+    bitdepth: (prms, callback, index) ->
+            if !prms or prms.length < 1 or !prms[0]
+                @endProcessImage callback, index, "prameters for bitdepth not defined, bitdepth can't be processed"
+                return
+                
+            gm(TMP_FILE_NAME).bitdepth(prms[0]).write TMP_FILE_NAME, (err) =>
+                @endProcessImage callback, index, err
+        
 
-    
     resize: (prms, callback, index) ->
 
         if prms.width

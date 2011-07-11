@@ -35,9 +35,9 @@
         process: srvParams,
         animateCss: "img-prr-animated",
         success: function(img) {
-          var himg, p, _i, _len;
-          for (_i = 0, _len = cltParams.length; _i < _len; _i++) {
-            p = cltParams[_i];
+          var himg, p, _k, _len3;
+          for (_k = 0, _len3 = cltParams.length; _k < _len3; _k++) {
+            p = cltParams[_k];
             himg = $(img).pixastic(p.process, p.params);
           }
           return himg;

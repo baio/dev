@@ -80,10 +80,15 @@
       };
     };
     ImageProcessor.prototype.getProcessorsCnt = function() {
-      var pr;
+      var arr, pr;
       pr = this.options.settings.process;
       if (pr) {
-        return pr.split(";").length;
+        arr = pr.split(";");
+        if (arr[arr.length - 1]) {
+          return arr.length;
+        } else {
+          return arr.length - 1;
+        }
       } else {
         return 0;
       }
@@ -91,8 +96,7 @@
     ImageProcessor.prototype.proccess = function() {
       return r({
         uri: this.options.settings.url,
-        encoding: "binary",
-        httpModule: true
+        encoding: "binary"
       }, __bind(function(error, response, body) {
         this.handleResponse(error, response, body);
         return null;
@@ -131,6 +135,8 @@
       switch (prr.name) {
         case "resize":
           return this.resize(prr.prms, callback, index);
+        case "bitdepth":
+          return this.bitdepth(prr.prms, callback, index);
         default:
           return this.endProcessImage(callback, index, "process " + prr.name + " not found");
       }
@@ -144,8 +150,17 @@
       if (index < 1) {
         return callback();
       } else {
-        return this.processImage(callback, index--);
+        return this.processImage(callback, --index);
       }
+    };
+    ImageProcessor.prototype.bitdepth = function(prms, callback, index) {
+      if (!prms || prms.length < 1 || !prms[0]) {
+        this.endProcessImage(callback, index, "prameters for bitdepth not defined, bitdepth can't be processed");
+        return;
+      }
+      return gm(TMP_FILE_NAME).bitdepth(prms[0]).write(TMP_FILE_NAME, __bind(function(err) {
+        return this.endProcessImage(callback, index, err);
+      }, this));
     };
     ImageProcessor.prototype.resize = function(prms, callback, index) {
       var fmt, height, width;
