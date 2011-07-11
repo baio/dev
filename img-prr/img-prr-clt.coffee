@@ -75,7 +75,9 @@ class ImageProcessorPresenter
 
                             if $.isFunction s.success
 
-                                img = s.success img
+                                himg = s.success img
+
+                                img = himg if himg?
 
                                 if img
 

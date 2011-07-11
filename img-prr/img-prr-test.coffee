@@ -19,7 +19,7 @@ $ ->
                 srvParams += $e.parent().text()
                 params = $e.parent().next().children(":input").val()
                 if params
-                    srvParams +=  "-" + params
+                    srvParams +=  "-" + params;
 
         $("#img_dest").imageProcessor "destroy"
         $("#img_dest").imageProcessor

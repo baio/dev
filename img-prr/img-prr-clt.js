@@ -44,7 +44,7 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
           timeout: 10000,
           success: function(data, status) {
             return $(s.img).load(function() {
-              var img, newImg;
+              var himg, img, newImg;
               this.width = data.width;
               this.height = data.height;
               img = this;
@@ -60,7 +60,10 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
               }
               $(this).show();
               if ($.isFunction(s.success)) {
-                img = s.success(img);
+                himg = s.success(img);
+                if (himg != null) {
+                  img = himg;
+                }
                 if (img) {
                   if (s.animateCss) {
                     $(img).position({

@@ -26,6 +26,7 @@
           if (params) {
             srvParams += "-" + params;
           }
+          srvParams += ";";
         }
       }
       $("#img_dest").imageProcessor("destroy");
