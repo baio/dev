@@ -12,6 +12,10 @@ name_of_process[-params];
 
 The consequent porcesses must be separated with ";"
 
+The processes and parameters could be seen here
+http://www.graphicsmagick.org/Magick++/Image.html#manipulate-an-image
+https://github.com/aheckmann/gm/tree/master/examples
+
 ========================================================
 1.resize
 ?resize-{width}[,{height}][,{format}]
