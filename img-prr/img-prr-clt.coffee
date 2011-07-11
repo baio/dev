@@ -28,7 +28,7 @@ class ImageProcessorPresenter
         return @dataHash[t.id]
 
     @removeData: (t) ->
-        @dataHash[t.id] = null
+        @dataHash[t.id] = null 
 
     load : ->
 
