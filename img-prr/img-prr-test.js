@@ -1,4 +1,18 @@
 (function() {
+  var client_processes, processVM, server_processes, viewModel;
+  client_processes = ["Blend", "Blur", "BlurFast", "Brightness", "ColorAdjust", "ColorHistogram", "Crop", "Desaturate", "EdgeDetection", "EdgeDetection2", "Emboss", "Flip", "Horizontally", "FlipVertically", "Glow", "Histogram", "Hue", "Saturation", "Lightness", "Invert", "LaplaceEdgeDetection", "Lighten", "Mosaic", "Noise", "Pointillize", "Posterize", "RemoveNoise", "Sepia", "Sharpen", "Solarize", "Unsharp", "Mask"];
+  server_processes = ["bitdepth", "blur", "changeFormat", "charcoal", "chop", "colorize", "colors", "comment", "contrast", "crop", "cycle", "despeckle", "dither", "drawing", "edge", "emboss", "enhance", "equalize", "flip", "flop", "gamma", "getters", "implode", "label", "limit", "lower", "magnify", "median", "minify", "modulate", "monochrome", "morph", "negative", "new", "noise1", "noise2", "paint", "quality", "raise", "region", "resample", "roll", "rotate", "scale", "sepia", "sharpen", "solarize", "spread", "swirl", "thumb"];
+  processVM = function(name) {
+    this.name = name;
+    this.checked = ko.observable(false);
+    this.params = ko.observable(null);
+
+    return null;
+  };
+  viewModel = {
+    cltProcesses: ko.observableArray([new processVM("one"), new processVM("two")])
+  };
+  ko.applyBindings(viewModel);
   $(function() {
     return $("#img_process").click(function() {
       var $e, cltParams, e, params, srvParams, _i, _j, _len, _len2, _ref, _ref2;
@@ -26,7 +40,6 @@
           if (params) {
             srvParams += "-" + params;
           }
-          srvParams += ";";
         }
       }
       $("#img_dest").imageProcessor("destroy");
@@ -36,9 +49,9 @@
         process: srvParams,
         animateCss: "img-prr-animated",
         success: function(img) {
-          var himg, p, _k, _len3;
-          for (_k = 0, _len3 = cltParams.length; _k < _len3; _k++) {
-            p = cltParams[_k];
+          var himg, p, _i, _len;
+          for (_i = 0, _len = cltParams.length; _i < _len; _i++) {
+            p = cltParams[_i];
             himg = $(img).pixastic(p.process, p.params);
           }
           return himg;
