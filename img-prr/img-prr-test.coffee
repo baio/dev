@@ -49,7 +49,7 @@ server_processes = [
           "cycle"
           "despeckle"
           "dither"
-          "drawing"
+          "draw"
           "edge"
           "emboss"
           "enhance"
@@ -77,6 +77,7 @@ server_processes = [
           "raise"
           "region"
           "resample"
+          "resize"
           "roll"
           "rotate"
           "scale"
@@ -93,9 +94,12 @@ processVM = (name) ->
     @name = name
     @checked = ko.observable false
     @params = ko.observable null
+    #you must return null here instead row above will be returned and knockout initialization silently fails
     null
 
-viewModel = cltProcesses : ko.observableArray [new processVM("one"),  new processVM("two")]
+viewModel =
+    cltProcesses : ko.observableArray $.map(client_processes, (p) -> new processVM p)
+    srvProcesses : ko.observableArray $.map(server_processes, (p) -> new processVM p)
 
 ko.applyBindings viewModel
 
@@ -109,20 +113,19 @@ $ ->
         cltParams = new Array()
         srvParams = ""
 
-        for e in $("#params :checked")
+        for e in $("#options_clt :checked")
             $e = $(e)
-            if $e.next().attr("type") == "checkbox"
-                cltParams.push
-                      process : $e.parent().text()
-                      params :  $e.parent().next().children(":input").val()
+            cltParams.push
+                  process : $e.next().text()
+                  params :  $e.next().next().val()
 
-        for e in $("#params :checked")
+        for e in $("#options_srv :checked")
             $e = $(e)
-            if $e.next().attr("type") != "checkbox"
-                srvParams += $e.parent().text()
-                params = $e.parent().next().children(":input").val()
-                if params
-                    srvParams +=  "-" + params;
+            srvParams += $.trim $e.next().text()
+            params = $.trim $e.next().next().val()
+            if params
+                srvParams +=  "-" + params
+            srvParams +=";"
 
         $("#img_dest").imageProcessor "destroy"
         $("#img_dest").imageProcessor

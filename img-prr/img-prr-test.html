@@ -5,14 +5,12 @@
     <meta charset="utf-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js" type="text/javascript"></script>
-
     <script src="jquery.tmpl.min.js"></script>
+
     <script src="knockout-1.2.1.js"></script>
 
-    <!--<script src="pixastic.custom.js"></script>
-
-    <script src="img-prr-clt.js"></script>-->
-
+    <script src="pixastic.custom.js"></script>
+    <script src="img-prr-clt.js"></script>
     <link rel="stylesheet" type="text/css" href="img-prr-animate.css"/>
 
     <style type="text/css">
@@ -22,34 +20,35 @@
     </style>
 </head>
 <body>
-<div> Options :
-    <div data-bind='template: {name : "srv_template", foreach : cltProcesses}'></div>
+<div> Client process :
+    <div id="options_clt" data-bind='template: {name : "srv_template", foreach : cltProcesses}'></div>
 </div>
+<div> Server process :
+    <div id="options_srv" data-bind='template: {name : "srv_template", foreach : srvProcesses}'></div>
+</div>
+<div>
 Image url:
-<input style="width:100%" type="text"
-       value="http://www.wikinoticia.com/images/elgeeky.com/elgeeky.com.wp-content.south.jpg" id="img_url"/>
-<button id="img_process"/>
-process it!</button>
+<input style="width:100%" type="text" value="http://www.wikinoticia.com/images/elgeeky.com/elgeeky.com.wp-content.south.jpg" id="img_url"/>
+<button id="img_process"/>process it!</button>
+</div>
 <div width="100%">
-    <div style="float: left">
-        <div>
-            Source image:<br/>
-            <img src="" alt="source image" id="img_src"/>
-        </div>
-        <div>
-            Processed image:<br/>
-            <img src="" alt="source image" id="img_dest"/>
-        </div>
+    <div style="display: table-cell;" >
+        Source image:<br/>
+        <img src="" alt="source image" id="img_src" />
+    </div>
+    <div style="display: table-cell;">
+        Processed image:<br/>
+        <img src="" alt="source image" id="img_dest" />
     </div>
 </div>
 <script type="text/html" id="srv_template">
-    <input type="checkbox" data-bind="${ checked : checked }" />
-    ${ name }
-    <input type="text" data-bind="${ visible : checked }"  />
+    <div  style="display:inline">
+        <input type="checkbox" data-bind="checked : checked"/>
+        <span> ${ name } </span>
+        <input type="text" data-bind=" visible : checked " />
+    </div>
 </script>
 
-<script src="img-prr-test.js"></script>
-<script type="text/javascript">
-</script>
+<script type="text/javascript" src="img-prr-test.js"></script>
 </body>
 </html> 
