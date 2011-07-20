@@ -151,7 +151,7 @@
     ImageProcessor.prototype.endProcessImage = function(callback, index, error) {
       var err;
       if (!error) {
-        console.log("Image proccess #prr. setp " + index + " success");
+        console.log("Image proccess [" + (this.getProcessor(index).name) + "]  step " + index + " success");
       } else {
         err = "Image proccess [" + (this.getProcessor(index).name) + "] setp " + index + " fails:\n" + error;
         console.log(err);

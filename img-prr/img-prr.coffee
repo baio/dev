@@ -237,7 +237,7 @@ class ImageProcessor
                 
     endProcessImage: (callback, index, error) ->    
         if !error 
-            console.log "Image proccess #prr. setp #{index} success"
+            console.log "Image proccess [#{@getProcessor(index).name}]  step #{index} success"
         else
             err = "Image proccess [#{@getProcessor(index).name}] setp #{index} fails:\n#{error}"
             console.log err

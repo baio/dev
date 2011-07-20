@@ -1,19 +1,21 @@
 (function() {
-  var client_processes, processVM, server_processes, viewModel;
+  var client_processes, processVM, server_processes, server_processes_disabled, viewModel;
   client_processes = ["Blend", "Blur", "BlurFast", "Brightness", "ColorAdjust", "ColorHistogram", "Crop", "Desaturate", "EdgeDetection", "EdgeDetection2", "Emboss", "Flip", "Horizontally", "FlipVertically", "Glow", "Histogram", "Hue", "Saturation", "Lightness", "Invert", "LaplaceEdgeDetection", "Lighten", "Mosaic", "Noise", "Pointillize", "Posterize", "RemoveNoise", "Sepia", "Sharpen", "Solarize", "Unsharp", "Mask"];
   server_processes = ["bitdepth", "blur", "changeFormat", "charcoal", "chop", "colorize", "colors", "comment", "contrast", "crop", "cycle", "despeckle", "dither", "draw", "edge", "emboss", "enhance", "equalize", "flip", "flop", "gamma", "implode", "label", "limit", "lower", "magnify", "median", "minify", "modulate", "monochrome", "morph", "negative", "new", "noise1", "noise2", "paint", "quality", "raise", "region", "resample", "resize", "roll", "rotate", "scale", "sepia", "sharpen", "solarize", "spread", "swirl", "thumb"];
-  processVM = function(name) {
+  server_processes_disabled = ["changeFormat", "morph", "thumb"];
+  processVM = function(name, enabled) {
     this.name = name;
+    this.enabled = enabled;
     this.checked = ko.observable(false);
     this.params = ko.observable(null);
     return null;
   };
   viewModel = {
     cltProcesses: ko.observableArray($.map(client_processes, function(p) {
-      return new processVM(p);
+      return new processVM(p, true);
     })),
     srvProcesses: ko.observableArray($.map(server_processes, function(p) {
-      return new processVM(p);
+      return new processVM(p, $.inArray(p, server_processes_disabled) === -1);
     }))
   };
   ko.applyBindings(viewModel);
