@@ -57,7 +57,6 @@ server_processes = [
           "flip"
           "flop"
           "gamma"
-          "getters"
           "implode"
           "label"
           "limit"
@@ -138,10 +137,14 @@ $ ->
 
                     animateCss : "img-prr-animated"
 
-                    success : (img) ->
+                    success : (img, errors) ->
 
                         for p in cltParams
 
                             himg = $(img).pixastic p.process, p.params
-
+                            
+                        $("#prc_errors").text ""
+                        $("#prc_errors").text errors.join "---\n"
+                            
                         himg
+                        

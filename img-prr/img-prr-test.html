@@ -1,44 +1,3 @@
-<<<<<<< HEAD
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"> 
-<html lang="en"> 
- 
-	<head> 
-		<meta charset="utf-8"> 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-        <!--<script src="Scripts/jquery.getimagedata.js"></script>-->
-        <script src="img-prr-clt.js"></script>
-        <script src="pixastic.custom.js"></script>
-        <link rel="stylesheet" media="all" href="img-prr-test.css">
-        <link id="agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRj3uQcM" rel="stylesheet" type="text/css" href="http://www.webputty.net/css/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRj3uQcM" />
-        <script type="text/javascript" src="http://www.webputty.net/js/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRj3uQcM"></script>
-	</head> 
-	
-	<body>
-        <h3>Header</h3>
-        <span>test</span>
-        
-        <!--
-        <div class="img-wrap">
-            <img id="cvs-src" src="your-image.jpg" />
-            <canvas width=500 height=500></canvas>
-        </div>
-        -->
-		<br style="clear:both"/>
-        <img id="img1" src="http://nodejs.org/logo.png" data-img-prr data-img-prr-process="resize-9,960gs" />
-		<script type="text/javascript">
-            $("[data-img-prr]").imageProcessor(
-                    {
-                        server : "http://maxvm.goip.ru:8087",
-                        success : function(img)
-                        {
-                            $(img).pixastic("desaturate");
-                            $(img).pixastic("blur");
-                        }
-                    }
-            );
-		</script>
-	</body> 
-=======
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="en">
 <head>
@@ -71,6 +30,11 @@ Image url:
 <input style="width:100%" type="text" value="http://www.wikinoticia.com/images/elgeeky.com/elgeeky.com.wp-content.south.jpg" id="img_url"/>
 <button id="img_process"/>process it!</button>
 </div>
+<div>
+Errors:
+<textarea style="width:100%; height:100px; color: red" type="text" id="prc_errors">
+</textarea>
+</div>
 <div width="100%">
     <div style="display: table-cell;" >
         Source image:<br/>
@@ -91,5 +55,4 @@ Image url:
 
 <script type="text/javascript" src="img-prr-test.js"></script>
 </body>
->>>>>>> 3b73c545ced37af43bb30e048762fb1720b90634
 </html> 

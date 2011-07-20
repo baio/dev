@@ -1,7 +1,7 @@
 (function() {
   var client_processes, processVM, server_processes, viewModel;
   client_processes = ["Blend", "Blur", "BlurFast", "Brightness", "ColorAdjust", "ColorHistogram", "Crop", "Desaturate", "EdgeDetection", "EdgeDetection2", "Emboss", "Flip", "Horizontally", "FlipVertically", "Glow", "Histogram", "Hue", "Saturation", "Lightness", "Invert", "LaplaceEdgeDetection", "Lighten", "Mosaic", "Noise", "Pointillize", "Posterize", "RemoveNoise", "Sepia", "Sharpen", "Solarize", "Unsharp", "Mask"];
-  server_processes = ["bitdepth", "blur", "changeFormat", "charcoal", "chop", "colorize", "colors", "comment", "contrast", "crop", "cycle", "despeckle", "dither", "draw", "edge", "emboss", "enhance", "equalize", "flip", "flop", "gamma", "getters", "implode", "label", "limit", "lower", "magnify", "median", "minify", "modulate", "monochrome", "morph", "negative", "new", "noise1", "noise2", "paint", "quality", "raise", "region", "resample", "resize", "roll", "rotate", "scale", "sepia", "sharpen", "solarize", "spread", "swirl", "thumb"];
+  server_processes = ["bitdepth", "blur", "changeFormat", "charcoal", "chop", "colorize", "colors", "comment", "contrast", "crop", "cycle", "despeckle", "dither", "draw", "edge", "emboss", "enhance", "equalize", "flip", "flop", "gamma", "implode", "label", "limit", "lower", "magnify", "median", "minify", "modulate", "monochrome", "morph", "negative", "new", "noise1", "noise2", "paint", "quality", "raise", "region", "resample", "resize", "roll", "rotate", "scale", "sepia", "sharpen", "solarize", "spread", "swirl", "thumb"];
   processVM = function(name) {
     this.name = name;
     this.checked = ko.observable(false);
@@ -49,12 +49,14 @@
         src: $("#img_url").val(),
         process: srvParams,
         animateCss: "img-prr-animated",
-        success: function(img) {
+        success: function(img, errors) {
           var himg, p, _k, _len3;
           for (_k = 0, _len3 = cltParams.length; _k < _len3; _k++) {
             p = cltParams[_k];
             himg = $(img).pixastic(p.process, p.params);
           }
+          $("#prc_errors").text("");
+          $("#prc_errors").text(errors.join("---\n"));
           return himg;
         }
       });
