@@ -28,7 +28,7 @@ class ImageProcessorPresenter
         return @dataHash[t.id]
 
     @removeData: (t) ->
-        @dataHash[t.id] = null
+        @dataHash[t.id] = null 
 
     load : ->
 
@@ -75,7 +75,9 @@ class ImageProcessorPresenter
 
                             if $.isFunction s.success
 
-                                img = s.success img
+                                himg = s.success img
+
+                                img = himg if himg?
 
                                 if img
 
