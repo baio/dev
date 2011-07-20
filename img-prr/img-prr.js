@@ -37,7 +37,7 @@
     return utils960gs;
   })();
   ImageProcessor = (function() {
-    var TMP_FILE_NAME, options, settings;
+    var TMP_FILE_NAME, options, processes, settings;
     TMP_FILE_NAME = null;
     settings = {
       url: null,
@@ -49,6 +49,7 @@
       response: null,
       settings: null
     };
+    processes = ["bitdepth", "blur", "changeFormat", "charcoal", "chop", "colorize", "colors", "comment", "contrast", "crop", "cycle", "despeckle", "dither", "draw", "edge", "emboss", "enhance", "equalize", "flip", "flop", "gamma", "getters", "implode", "label", "limit", "lower", "magnify", "median", "minify", "modulate", "monochrome", "morph", "negative", "new", "noise1", "noise2", "paint", "quality", "raise", "region", "resample", "roll", "rotate", "scale", "sepia", "sharpen", "solarize", "spread", "swirl", "thumb"];
     ImageProcessor.Process = function(options) {
       var imgPrr;
       imgPrr = new ImageProcessor(options);
@@ -126,21 +127,21 @@
       }
     };
     ImageProcessor.prototype.processImage = function(callback, idx) {
-      var index, prr;
+      var index, prc, prr, _i, _len;
       index = idx != null ? idx : this.getProcessorsCnt() - 1;
       if (index === -1) {
         return this.endProcessImage(callback, index);
       }
       prr = this.getProcessor(index);
+      for (_i = 0, _len = processes.length; _i < _len; _i++) {
+        prc = processes[_i];
+        if (prc === prr.name) {
+          return this.processing(prr.name, prr.prms, callback, index);
+        }
+      }
       switch (prr.name) {
         case "resize":
           return this.resize(prr.prms, callback, index);
-        case "bitdepth":
-          return this.processing("bitdepth", prr.prms, callback, index);
-        case "blur":
-          return this.processing("blur", prr.prms, callback, index);
-        case "charcoal":
-          return this.processing("charcoal", prr.prms, callback, index);
         default:
           return this.endProcessImage(callback, index, "process " + prr.name + " not found");
       }
@@ -157,34 +158,8 @@
         return this.processImage(callback, --index);
       }
     };
-    /*
-        bitdepth: (prms, callback, index) ->
-                if !prms or prms.length < 1 or !prms[0]
-                    @endProcessImage callback, index, "prameters for bitdepth not defined, bitdepth can't be processed"
-                    return
-                    
-                gm(TMP_FILE_NAME).bitdepth(prms[0]).write TMP_FILE_NAME, (err) =>
-                    @endProcessImage callback, index, err
-    
-        blur: (prms, callback, index) ->
-                if !prms or prms.length < 2 or !prms[0] or !prms[1]
-                    @endProcessImage callback, index, "prameters for blur not defined, blur can't be processed"
-                    return
-            
-                gm(TMP_FILE_NAME).blur(prms[0], prms[1]).write TMP_FILE_NAME, (err) =>
-                    @endProcessImage callback, index, err
-    
-    
-        charcoal: (prms, callback, index) ->
-            processOperation "charcoal", 1, prms, index    
-        */
     ImageProcessor.prototype.processing = function(processName, prms, callback, index) {
-      /*
-                  for prm in [0..prmsCnt-1]
-                      if not prm? 
-                          @endProcessImage callback, index, "prameters for #{processName} not defined, #{processName} can't be processed"
-                          return
-                  */      var func, g;
+      var func, g;
       try {
         console.log("processing " + processName);
         g = gm(TMP_FILE_NAME);

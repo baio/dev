@@ -44,6 +44,112 @@ class ImageProcessor
         
         settings : null
         
+    processes = [
+        
+        "bitdepth"
+        
+        "blur"
+        
+        "changeFormat"
+        
+        "charcoal"
+        
+        "chop"
+        
+        "colorize"
+        
+        "colors"
+        
+        "comment"
+        
+        "contrast"
+        
+        "crop"
+        
+        "cycle"
+        
+        "despeckle"
+        
+        "dither"
+        
+        "draw"
+        
+        "edge"
+        
+        "emboss"
+        
+        "enhance"
+        
+        "equalize"
+        
+        "flip"
+         
+        "flop"
+        
+        "gamma"
+        
+        "getters"
+        
+        "implode"
+        
+        "label"
+        
+        "limit"
+        
+        "lower"
+        
+        "magnify"
+
+        "median"
+
+        "minify"
+
+        "modulate"
+
+        "monochrome"
+
+        "morph"
+
+        "negative"
+
+        "new"
+
+        "noise1"
+
+        "noise2"
+
+        "paint"
+
+        "quality"
+
+        "raise"
+
+        "region"
+
+        "resample"
+
+        #"resize" sepcial case
+
+        "roll"
+
+        "rotate"
+
+        "scale"
+
+        "sepia"
+
+        "sharpen"
+
+        "solarize"
+
+        "spread"
+
+        "swirl"
+
+        "thumb"
+    ]
+
+        
     #static method
     @Process : (options) ->
         imgPrr = new ImageProcessor options
@@ -117,16 +223,14 @@ class ImageProcessor
             return @endProcessImage callback, index
                     
         prr = @getProcessor index
+
+        for prc in processes
+            if prc == prr.name
+                return @processing prr.name, prr.prms, callback, index
                     
         switch prr.name
             when "resize"  
                     @resize prr.prms, callback, index
-            when "bitdepth"  
-                    @processing "bitdepth", prr.prms, callback, index
-            when "blur"
-                    @processing "blur", prr.prms, callback, index
-            when "charcoal"
-                    @processing "charcoal", prr.prms, callback, index
             else 
                 @endProcessImage callback, index, "process #{prr.name} not found"
                 
@@ -141,37 +245,8 @@ class ImageProcessor
         else        
             @processImage callback, --index
             
-        
-    ###
-    bitdepth: (prms, callback, index) ->
-            if !prms or prms.length < 1 or !prms[0]
-                @endProcessImage callback, index, "prameters for bitdepth not defined, bitdepth can't be processed"
-                return
-                
-            gm(TMP_FILE_NAME).bitdepth(prms[0]).write TMP_FILE_NAME, (err) =>
-                @endProcessImage callback, index, err
-
-    blur: (prms, callback, index) ->
-            if !prms or prms.length < 2 or !prms[0] or !prms[1]
-                @endProcessImage callback, index, "prameters for blur not defined, blur can't be processed"
-                return
-        
-            gm(TMP_FILE_NAME).blur(prms[0], prms[1]).write TMP_FILE_NAME, (err) =>
-                @endProcessImage callback, index, err
-
-
-    charcoal: (prms, callback, index) ->
-        processOperation "charcoal", 1, prms, index    
-    ###
-                
+                        
     processing: (processName, prms, callback, index) ->
-            
-            ###
-            for prm in [0..prmsCnt-1]
-                if not prm? 
-                    @endProcessImage callback, index, "prameters for #{processName} not defined, #{processName} can't be processed"
-                    return
-            ###
             
             
             try
