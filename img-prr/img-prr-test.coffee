@@ -57,7 +57,6 @@ server_processes = [
           "flip"
           "flop"
           "gamma"
-          "getters"
           "implode"
           "label"
           "limit"
@@ -89,17 +88,24 @@ server_processes = [
           "thumb"
       ]
 
+server_processes_disabled = [
+        "changeFormat"
+        "morph"
+        "thumb"
+    ]
+    
 #--ko initialization
-processVM = (name) ->
+processVM = (name, enabled) ->
     @name = name
+    @enabled = enabled
     @checked = ko.observable false
     @params = ko.observable null
     #you must return null here instead row above will be returned and knockout initialization silently fails
     null
 
 viewModel =
-    cltProcesses : ko.observableArray $.map(client_processes, (p) -> new processVM p)
-    srvProcesses : ko.observableArray $.map(server_processes, (p) -> new processVM p)
+    cltProcesses : ko.observableArray $.map(client_processes, (p) -> new processVM p, true)
+    srvProcesses : ko.observableArray $.map(server_processes, (p) -> new processVM p, $.inArray(p, server_processes_disabled) == -1 )
 
 ko.applyBindings viewModel
 
@@ -138,10 +144,14 @@ $ ->
 
                     animateCss : "img-prr-animated"
 
-                    success : (img) ->
+                    success : (img, errors) ->
 
                         for p in cltParams
 
                             himg = $(img).pixastic p.process, p.params
-
+                            
+                        $("#prc_errors").text ""
+                        $("#prc_errors").text errors.join "---\n"
+                            
                         himg
+                        

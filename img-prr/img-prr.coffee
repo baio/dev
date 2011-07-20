@@ -44,6 +44,8 @@ class ImageProcessor
         
         settings : null
         
+    errors = []
+        
     processes = [
         
         "bitdepth"
@@ -87,8 +89,6 @@ class ImageProcessor
         "flop"
         
         "gamma"
-        
-        "getters"
         
         "implode"
         
@@ -188,6 +188,7 @@ class ImageProcessor
             0
                             
     proccess: ->
+        errors = []
         r uri : @options.settings.url, encoding : "binary",  (error, response, body) => 
                     @handleResponse error, response, body   
                     null
@@ -236,9 +237,11 @@ class ImageProcessor
                 
     endProcessImage: (callback, index, error) ->    
         if !error 
-            console.log "Image proccess setp #{index} success"
+            console.log "Image proccess [#{@getProcessor(index).name}]  step #{index} success"
         else
-            console.log "Image proccess setp #{index} fails:\n#{error}"
+            err = "Image proccess [#{@getProcessor(index).name}] setp #{index} fails:\n#{error}"
+            console.log err
+            errors.push err
         
         if index < 1
             callback()
@@ -331,16 +334,18 @@ class ImageProcessor
                 image_64 = "data:#{mimetype};base64,#{image.toString('base64')}"
 
                 obj =
+                    errors : errors
                     width : size.width
                     height : size.height
                     data : image_64
+
 
                 res.writeHead 200, 'Content-Type' : 'application/json; charset=UTF-8'
                 
                 ret = "#{opt.settings.callback}(#{JSON.stringify(obj)});"
                 
                 res.end ret
-                
+                    
                 
 app = express.createServer()
 

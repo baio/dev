@@ -37,7 +37,7 @@
     return utils960gs;
   })();
   ImageProcessor = (function() {
-    var TMP_FILE_NAME, options, processes, settings;
+    var TMP_FILE_NAME, errors, options, processes, settings;
     TMP_FILE_NAME = null;
     settings = {
       url: null,
@@ -49,7 +49,8 @@
       response: null,
       settings: null
     };
-    processes = ["bitdepth", "blur", "changeFormat", "charcoal", "chop", "colorize", "colors", "comment", "contrast", "crop", "cycle", "despeckle", "dither", "draw", "edge", "emboss", "enhance", "equalize", "flip", "flop", "gamma", "getters", "implode", "label", "limit", "lower", "magnify", "median", "minify", "modulate", "monochrome", "morph", "negative", "new", "noise1", "noise2", "paint", "quality", "raise", "region", "resample", "roll", "rotate", "scale", "sepia", "sharpen", "solarize", "spread", "swirl", "thumb"];
+    errors = [];
+    processes = ["bitdepth", "blur", "changeFormat", "charcoal", "chop", "colorize", "colors", "comment", "contrast", "crop", "cycle", "despeckle", "dither", "draw", "edge", "emboss", "enhance", "equalize", "flip", "flop", "gamma", "implode", "label", "limit", "lower", "magnify", "median", "minify", "modulate", "monochrome", "morph", "negative", "new", "noise1", "noise2", "paint", "quality", "raise", "region", "resample", "roll", "rotate", "scale", "sepia", "sharpen", "solarize", "spread", "swirl", "thumb"];
     ImageProcessor.Process = function(options) {
       var imgPrr;
       imgPrr = new ImageProcessor(options);
@@ -95,6 +96,7 @@
       }
     };
     ImageProcessor.prototype.proccess = function() {
+      errors = [];
       return r({
         uri: this.options.settings.url,
         encoding: "binary"
@@ -147,10 +149,13 @@
       }
     };
     ImageProcessor.prototype.endProcessImage = function(callback, index, error) {
+      var err;
       if (!error) {
-        console.log("Image proccess setp " + index + " success");
+        console.log("Image proccess [" + (this.getProcessor(index).name) + "]  step " + index + " success");
       } else {
-        console.log("Image proccess setp " + index + " fails:\n" + error);
+        err = "Image proccess [" + (this.getProcessor(index).name) + "] setp " + index + " fails:\n" + error;
+        console.log(err);
+        errors.push(err);
       }
       if (index < 1) {
         return callback();
@@ -238,6 +243,7 @@
         } else {
           image_64 = "data:" + mimetype + ";base64," + (image.toString('base64'));
           obj = {
+            errors: errors,
             width: size.width,
             height: size.height,
             data: image_64

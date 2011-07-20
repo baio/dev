@@ -60,7 +60,7 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
               }
               $(this).show();
               if ($.isFunction(s.success)) {
-                himg = s.success(img);
+                himg = s.success(img, data.errors);
                 if (himg != null) {
                   img = himg;
                 }
