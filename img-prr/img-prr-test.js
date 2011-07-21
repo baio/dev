@@ -190,7 +190,7 @@
         server: "http://maxvm.goip.ru:8087",
         src: $("#img_url").val(),
         process: srvParams,
-        animateCss: "img-prr-animated",
+        animateCss: $("animate_img").attr("checked") ? "img-prr-animated" : void 0,
         success: function(img, errors) {
           var himg, p, _i, _len;
           himg = $(img);

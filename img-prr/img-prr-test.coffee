@@ -134,7 +134,7 @@ $ ->
 
                     process : srvParams
 
-                    animateCss : "img-prr-animated"
+                    animateCss : "img-prr-animated" if $("animate_img").attr "checked"
 
                     success : (img, errors) ->
 
