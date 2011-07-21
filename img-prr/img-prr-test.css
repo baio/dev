@@ -1,0 +1,270 @@
+/*
+-----------------------------------------------
+Layout: Developers
+Style: Wireframe
+Squarespace v.5
+-----------------------------------------------
+*/
+
+
+/* Layout */
+
+
+body { }
+
+#canvas {  }
+
+#canvasWrapper { }
+
+#pageHeaderWrapper { }
+
+#pageHeader { }
+
+#pageBodyWrapper { }
+
+#pageBody { }
+
+#contentWrapper { }
+
+#content { }
+
+#pageFooterWrapper { }
+
+#pageFooter { }
+
+
+
+/* Navigation */
+
+
+#active-module-marker { }
+
+#navigationTop .horizontalNavigationBar { }
+
+#navigationTop .horizontalNavigationBar .content-navigation { }
+
+#navigationTop .horizontalNavigationBar .folder { }
+
+#navigationTop .horizontalNavigationBar .folder-link { }
+
+#navigationTop .horizontalNavigationBar .folder-open { }
+
+#navigationTop .horizontalNavigationBar .folder-open .module a { }
+
+#navigationBottom .horizontalNavigationBar { }
+
+#navigationBottom .horizontalNavigationBar .content-navigation { }
+
+#navigationBottom .horizontalNavigationBar .folder { }
+
+#navigationBottom .horizontalNavigationBar .folder-link { }
+
+#navigationBottom .horizontalNavigationBar .folder-open { }
+
+#navigationBottom .horizontalNavigationBar .folder-open .module a { }
+
+#sidebar1Wrapper { }
+
+#sidebar1 { }
+
+#sidebar2Wrapper { }
+
+#sidebar2 { }
+
+.sectionInternalWrapper1 { }
+
+.sectionInternalWrapper2 { }
+
+.verticalNavigationBar { }
+
+.verticalNavigationBar .section { }
+
+.verticalNavigationBar .folder-closed { }
+
+.verticalNavigationBar .folder-closed .folder-link { }
+
+.verticalNavigationBar .folder-open { }
+
+.verticalNavigationBar .folder-open .folder-link { }
+
+.verticalNavigationBar .section .folder .module { border-bottom: none; }
+
+.verticalNavigationBarInternalWrapper1 { }
+
+.verticalNavigationBarInternalWrapper2 { }
+
+
+
+/* Amazon Lists */
+
+
+.amazon-item-list .picture img  {  }
+
+.amazon-item-list-pt .picture img {  }
+
+.amazon-item-list-pt .authors {  }
+
+.amazon-item-list-pt .title {  }
+
+
+
+
+/* Link Lists */
+
+
+.link-list { }
+
+.link-group-list-pt li .title { }
+
+.link-group-list-pt li ul li { }
+
+.link-group-list-pt li ul li .description { }
+
+.link-group-list-pt li ul li .title { }
+
+.link-group-list li ul li { }
+
+
+
+/* Comments */
+
+
+.comment { }
+
+.comment .body { }
+
+.comment .signature { }
+
+.comment .signature .inline-icon {  }
+
+.discussion-comment-list li {  }
+
+#preview { }
+
+
+
+
+/*  Forms */
+
+
+.form-body .fieldTitle { }
+
+.form-body .formTitle { }
+
+.form-body .paragraphtext-small, .form-body .paragraphtext-medium, .form-body .paragraphtext-large { }
+
+.form-body .paragraphtext-small-inline, .form-body .paragraphtext-medium-inline, .form-body .paragraphtext-large-inline { }
+
+.form-body .sectionBreak { }
+
+.form-body .singlelinetext-small, .form-body .singlelinetext-medium, .form-body .singlelinetext-large { }
+
+.form-body .singlelinetext-small-inline, .form-body .singlelinetext-medium-inline, .form-body .singlelinetext-large-inline, .content-passthrough .form-body .singlelinetext-small, .content-passthrough .form-body .singlelinetext-medium, .content-passthrough .form-body .singlelinetext-large  { }
+
+input.text { }
+
+.input-field .title { }
+
+.notice-box { }
+
+textarea { }
+
+
+
+
+/* Journals */
+
+.category-icon { }
+
+.comment-icon { }
+
+.date-icon { }
+
+.email-icon { }
+
+.journal-entry-tag-pre-title { }
+
+.journal-entry-tag-pre-title .inline-icon { display: none; }
+
+.journal-entry-tag-post-title { }
+
+.journal-entry-tag-post-title .inline-icon { display: none; }
+
+.postComments { }
+
+.postReferences { }
+
+.postedBy { }
+
+.postedIn { }
+
+.postedOn { }
+
+.reference-icon { }
+
+.user-registered-icon { }
+
+
+
+/* Search */
+
+.search-result { }
+
+.search-result .search-result-body { }
+
+.search-result .search-result-body .hit-word-body { }
+
+.search-result .search-result-title { }
+
+.search-result .search-result-tag { }
+
+.content-passthrough .search-form-pt .queryField {  }
+
+.content-passthrough .submit-button {  }
+
+
+
+
+/* Thumbnails */
+
+
+.thumbnail { }
+
+.thumbnail-image-float-left img { }
+
+.thumbnail-image-float-right img { }
+
+.thumbnail-image-float-none img { }
+
+
+
+
+/* Additional Customizations */
+
+
+#bannerWrapper { }
+
+.error-text { }
+
+.faq-question-list li {  }
+
+.feed-list .feed-link {  }
+
+.file-item-list li {  }
+
+.offsite-link { }
+
+#squarespace-powered { }
+
+blockquote {
+    padding: 15px 20px 5px 50px;
+    font-style: italic;
+    border: dashed 1px #ccc;
+    margin: 0 8px 15px 0;
+    background: #fff url(/storage/bg-blockquote.gif) no-repeat 15px 18px;
+    clear: both;
+}
+
+a {
+   color: red;
+}
