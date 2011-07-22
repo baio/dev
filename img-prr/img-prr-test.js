@@ -1,21 +1,161 @@
 (function() {
-  var client_processes, processVM, server_processes, server_processes_disabled, viewModel;
-  client_processes = ["Blend", "Blur", "BlurFast", "Brightness", "ColorAdjust", "ColorHistogram", "Crop", "Desaturate", "EdgeDetection", "EdgeDetection2", "Emboss", "Flip", "Horizontally", "FlipVertically", "Glow", "Histogram", "Hue", "Saturation", "Lightness", "Invert", "LaplaceEdgeDetection", "Lighten", "Mosaic", "Noise", "Pointillize", "Posterize", "RemoveNoise", "Sepia", "Sharpen", "Solarize", "Unsharp", "Mask"];
-  server_processes = ["bitdepth", "blur", "changeFormat", "charcoal", "chop", "colorize", "colors", "comment", "contrast", "crop", "cycle", "despeckle", "dither", "draw", "edge", "emboss", "enhance", "equalize", "flip", "flop", "gamma", "implode", "label", "limit", "lower", "magnify", "median", "minify", "modulate", "monochrome", "morph", "negative", "new", "noise1", "noise2", "paint", "quality", "raise", "region", "resample", "resize", "roll", "rotate", "scale", "sepia", "sharpen", "solarize", "spread", "swirl", "thumb"];
-  server_processes_disabled = ["changeFormat", "morph", "thumb"];
-  processVM = function(name, enabled) {
-    this.name = name;
-    this.enabled = enabled;
+  var client_processes, processVM, server_processes, viewModel;
+  client_processes = [
+    {
+      name: "Blend",
+      disabled: true
+    }, {
+      name: "Blur"
+    }, {
+      name: "BlurFast",
+      def: {
+        amount: 0.5
+      }
+    }, {
+      name: "Brightness",
+      def: {
+        brightness: 50,
+        contrast: 0.5
+      }
+    }, {
+      name: "ColorAdjust",
+      def: {
+        red: 0.5,
+        green: 0,
+        blue: 0
+      }
+    }, {
+      name: "ColorHistogram",
+      disabled: true
+    }, {
+      name: "Crop",
+      def: {
+        rect: {
+          left: 50,
+          top: 50,
+          width: 50,
+          height: 50
+        }
+      }
+    }, {
+      name: "Desaturate",
+      def: {
+        average: false
+      }
+    }, {
+      name: "EdgeDetection",
+      def: {
+        mono: true,
+        invert: false
+      }
+    }, {
+      name: "EdgeDetection2"
+    }, {
+      name: "Emboss",
+      def: {
+        greyLevel: 100,
+        direction: "topright"
+      }
+    }, {
+      name: "FlipHorizontally"
+    }, {
+      name: "FlipVertically"
+    }, {
+      name: "Glow",
+      def: {
+        amount: 0.5,
+        radius: 1.0
+      }
+    }, {
+      name: "Histogram",
+      disabled: true
+    }, {
+      name: "Hue",
+      def: {
+        hue: 30,
+        saturation: 20,
+        lightness: 0
+      }
+    }, {
+      name: "Invert"
+    }, {
+      name: "Laplace",
+      def: {
+        edgeStrength: 0.5,
+        invert: false,
+        greyLevel: 0
+      }
+    }, {
+      name: "Lighten",
+      def: {
+        amount: 0.5
+      }
+    }, {
+      name: "Mosaic",
+      def: {
+        blockSize: 10
+      }
+    }, {
+      name: "Noise",
+      def: {
+        mono: true,
+        amount: 0.5,
+        strength: 0.5
+      }
+    }, {
+      name: "Pointillize",
+      disabled: true
+    }, {
+      name: "Posterize",
+      def: {
+        levels: 10
+      }
+    }, {
+      name: "RemoveNoise"
+    }, {
+      name: "Sepia"
+    }, {
+      name: "Sharpen",
+      def: {
+        amount: 0.5
+      }
+    }, {
+      name: "Solarize"
+    }, {
+      name: "UnsharpMask",
+      def: {
+        amount: 0.5,
+        radius: 1,
+        treshold: 100
+      }
+    }
+  ];
+  server_processes = [
+    "bitdepth", "blur", {
+      name: "changeFormat",
+      disabled: true
+    }, "charcoal", "chop", "colorize", "colors", "comment", "contrast", "crop", "cycle", "despeckle", "dither", "draw", "edge", "emboss", "enhance", "equalize", "flip", "flop", "gamma", "implode", "label", "limit", "lower", "magnify", "median", "minify", "modulate", "monochrome", {
+      name: "morph",
+      disabled: true
+    }, "negative", "new", "noise1", "noise2", "paint", "quality", "raise", "region", "resample", "resize", "roll", "rotate", "scale", "sepia", "sharpen", "solarize", "spread", "swirl", {
+      name: "thumb",
+      disabled: true
+    }
+  ];
+  processVM = function(obj) {
+    this.name = obj.name ? obj.name : obj;
+    this.def = obj.def ? JSON.stringify(obj.def) : null;
+    this.enabled = obj.disabled ? !obj.disabled : true;
     this.checked = ko.observable(false);
     this.params = ko.observable(null);
     return null;
   };
   viewModel = {
     cltProcesses: ko.observableArray($.map(client_processes, function(p) {
-      return new processVM(p, true);
+      return new processVM(p);
     })),
     srvProcesses: ko.observableArray($.map(server_processes, function(p) {
-      return new processVM(p, $.inArray(p, server_processes_disabled) === -1);
+      return new processVM(p);
     }))
   };
   ko.applyBindings(viewModel);
@@ -30,8 +170,8 @@
         e = _ref[_i];
         $e = $(e);
         cltParams.push({
-          process: $e.next().text(),
-          params: $e.next().next().val()
+          process: $.trim($e.next().text().toLowerCase()),
+          params: $.trim($e.next().next().val())
         });
       }
       _ref2 = $("#options_srv :checked");
@@ -50,19 +190,17 @@
         server: "http://maxvm.goip.ru:8087",
         src: $("#img_url").val(),
         process: srvParams,
-        animateCss: "img-prr-animated",
+        animateCss: $("animate_img").attr("checked") ? "img-prr-animated" : void 0,
         success: function(img, errors) {
           var himg, p, _k, _len3;
+          himg = $(img);
           for (_k = 0, _len3 = cltParams.length; _k < _len3; _k++) {
             p = cltParams[_k];
-            himg = $(img).pixastic(p.process, p.params);
+            himg = himg.pixastic(p.process, p.params ? eval('(' + p.params + ')') : null);
           }
           $("#prc_errors").text("");
           $("#prc_errors").text(errors.join("---\n"));
           return himg;
-        },
-        error: function(xhr, text) {
-          return $("#prc_errors").text(text);
         }
       });
     });
