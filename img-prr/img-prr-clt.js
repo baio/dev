@@ -119,14 +119,14 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             $t = $(this);
             orig = $(this).clone()[0];
             /*
-                                id : @id
-                                name : @name
-                                width : @width
-                                height : @height
-                                src : @src
-                                alt : @alt
-                                style : @style
-                            */
+                id : @id
+                name : @name
+                width : @width
+                height : @height
+                src : @src
+                alt : @alt
+                style : @style
+            */
             attr = $t.attr("data-img-prr-server");
             if (attr) {
               s.server = attr;
@@ -174,8 +174,10 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             var data;
             data = ImageProcessorPresenter.data(this);
             if (data) {
-              if (data.animateImg) {
-                $(data.animateImg).remove();
+              if (data.prr.imageCss) {
+                if (data.animateImg) {
+                  $(data.animateImg).remove();
+                }
               }
               $(this).replaceWith(data.orig);
               return ImageProcessorPresenter.removeData(this);

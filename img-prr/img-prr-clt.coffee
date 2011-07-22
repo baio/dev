@@ -207,8 +207,9 @@ $.fn.extend
                  data = ImageProcessorPresenter.data @
 
                  if data
-                    if data.animateImg
-                        $(data.animateImg).remove()
+                    if data.prr.imageCss
+                        if data.animateImg
+                            $(data.animateImg).remove()
                     $(@).replaceWith data.orig
                     ImageProcessorPresenter.removeData @
 
