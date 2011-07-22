@@ -1,40 +1,44 @@
 
 #create menu
 client_processes = [
-    {name : "Blend", disabled : true}
-    {name : "Blur"}
-    {name : "BlurFast", def : {amount:0.5}}
-    {name : "Brightness", def : {brightness:50,contrast:0.5}}
-    {name : "ColorAdjust", def : {red:0.5,green:0,blue:0}}
-    {name : "ColorHistogram", disabled : true}
-    {name : "Crop", def : { rect : {left : 50, top : 50, width : 50, height : 50} }}
-    {name : "Desaturate", def : {average : false}}
-    {name : "EdgeDetection", def : {mono:true, invert:false}}
-    {name : "EdgeDetection2"}
-    {name : "Emboss", def : {greyLevel:100,direction:"topright"}}
-    {name : "FlipHorizontally"}
-    {name : "FlipVertically"}
-    {name : "Glow", def : {amount:0.5,radius:1.0}}
-    {name : "Histogram", disabled : true}
-    {name : "Hue", def : {hue:30,saturation:20,lightness:0}}
-    {name : "Invert"}
-    {name : "Laplace", def : {edgeStrength:0.5,invert:false,greyLevel:0}}
-    {name : "Lighten", def : {amount:0.5}}
-    {name : "Mosaic", def : {blockSize:10}}
-    {name : "Noise", def : {mono:true,amount:0.5,strength:0.5}}
-    {name : "Pointillize", disabled :  true}
-    {name : "Posterize", def : {levels:10}}
-    {name : "RemoveNoise"}
-    {name : "Sepia"}
-    {name : "Sharpen", def : { amount : 0.5 }}
-    {name : "Solarize"}
-    {name : "UnsharpMask", def : {amount:0.5, radius:1, treshold:100}}
+    "Blend"
+    "Blur"
+    "BlurFast"
+    "Brightness"
+    "ColorAdjust"
+    "ColorHistogram"
+    "Crop"
+    "Desaturate"
+    "EdgeDetection"
+    "EdgeDetection2"
+    "Emboss"
+    "Flip"
+    "Horizontally"
+    "FlipVertically"
+    "Glow"
+    "Histogram"
+    "Hue"
+    "Saturation"
+    "Lightness"
+    "Invert"
+    "LaplaceEdgeDetection"
+    "Lighten"
+    "Mosaic"
+    "Noise"
+    "Pointillize"
+    "Posterize"
+    "RemoveNoise"
+    "Sepia"
+    "Sharpen"
+    "Solarize"
+    "Unsharp"
+    "Mask"
 ]
 
 server_processes = [
           "bitdepth"
           "blur"
-          name : "changeFormat", disabled : true
+          "changeFormat"
           "charcoal"
           "chop"
           "colorize"
@@ -62,7 +66,7 @@ server_processes = [
           "minify"
           "modulate"
           "monochrome"
-          name : "morph", disabled : true
+          "morph"
           "negative"
           "new"
           "noise1"
@@ -81,23 +85,27 @@ server_processes = [
           "solarize"
           "spread"
           "swirl"
-          name : "thumb", disabled : true
+          "thumb"
       ]
 
-
+server_processes_disabled = [
+        "changeFormat"
+        "morph"
+        "thumb"
+    ]
+    
 #--ko initialization
-processVM = (obj) ->
-    @name = if obj.name then obj.name else obj
-    @def = if obj.def then JSON.stringify(obj.def) else null
-    @enabled = if obj.disabled then !obj.disabled else true
+processVM = (name, enabled) ->
+    @name = name
+    @enabled = enabled
     @checked = ko.observable false
     @params = ko.observable null
     #you must return null here instead row above will be returned and knockout initialization silently fails
     null
 
 viewModel =
-    cltProcesses : ko.observableArray $.map(client_processes, (p) -> new processVM p)
-    srvProcesses : ko.observableArray $.map(server_processes, (p) -> new processVM p)
+    cltProcesses : ko.observableArray $.map(client_processes, (p) -> new processVM p, true)
+    srvProcesses : ko.observableArray $.map(server_processes, (p) -> new processVM p, $.inArray(p, server_processes_disabled) == -1 )
 
 ko.applyBindings viewModel
 
@@ -114,8 +122,8 @@ $ ->
         for e in $("#options_clt :checked")
             $e = $(e)
             cltParams.push
-                  process : $.trim $e.next().text().toLowerCase()
-                  params :  $.trim $e.next().next().val()
+                  process : $e.next().text()
+                  params :  $e.next().next().val()
 
         for e in $("#options_srv :checked")
             $e = $(e)
@@ -134,18 +142,19 @@ $ ->
 
                     process : srvParams
 
-                    animateCss : "img-prr-animated" if $("animate_img").attr "checked"
+                    animateCss : "img-prr-animated"
 
                     success : (img, errors) ->
 
-                        himg = $ img
-
                         for p in cltParams
 
-                            himg = himg.pixastic p.process, if p.params then eval('(' + p.params + ')') else null
+                            himg = $(img).pixastic p.process, p.params
                             
                         $("#prc_errors").text ""
                         $("#prc_errors").text errors.join "---\n"
                             
                         himg
+                        
+                    error : (xhr, text) -> 
+                        $("#prc_errors").text text
                         

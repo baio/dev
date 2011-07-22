@@ -29,7 +29,6 @@
 Image url:
 <input style="width:100%" type="text" value="http://www.wikinoticia.com/images/elgeeky.com/elgeeky.com.wp-content.south.jpg" id="img_url"/>
 <button id="img_process"/>process it!</button>
-<input type="checkbox" value="animate image" id="animate_img"/>
 </div>
 <div>
 Errors:
@@ -50,9 +49,10 @@ Errors:
     <div  style="display:inline">
         <input type="checkbox" data-bind="checked : checked, enable : enabled"/>
         <span> ${ name } </span>
-        <input type="text" data-bind=" visible : checked, value : def " />
+        <input type="text" data-bind=" visible : checked " />
     </div>
 </script>
+
 <script type="text/javascript" src="img-prr-test.js"></script>
 </body>
 </html> 
