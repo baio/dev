@@ -11,24 +11,33 @@
     <script src="pixastic.custom.js"></script>
     <script src="img-prr-clt.js"></script>
     <link rel="stylesheet" type="text/css" href="img-prr-animate.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Pompiere">
 
     <style type="text/css">
-        div {
-            border-style: dotted;
-        }
     </style>
+<link id="agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRitugoM" rel="stylesheet" type="text/css" href="http://www.webputty.net/css/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRitugoM" />
+<script type="text/javascript" src="http://www.webputty.net/js/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRitugoM"></script>
 </head>
 <body>
-<div> Client process :
+<section>
+<div>
+    <h3 calss="left-only">Client process</h3>
+     <div class="descr"><a href="http://www.pixastic.com/lib/docs/">Description</a> of functions and their paramteres.</div>
     <div id="options_clt" data-bind='template: {name : "srv_template", foreach : cltProcesses}'></div>
 </div>
-<div> Server process :
+<div> 
+    <h3 calss="right-only">Server process</h3>
+    <div class="descr"><a href="http://www.graphicsmagick.org/GraphicsMagick.html">
+        Description</a> <a href="https://github.com/aheckmann/gm">and another</a> of functions and their paramteres.</div>
     <div id="options_srv" data-bind='template: {name : "srv_template", foreach : srvProcesses}'></div>
 </div>
+</section>
 <div>
 Image url:
 <input style="width:100%" type="text" value="http://www.wikinoticia.com/images/elgeeky.com/elgeeky.com.wp-content.south.jpg" id="img_url"/>
-<button id="img_process"/>process it!</button>
+<button id="img_process" class="awesome-button"/>PROCESS IT!</button>
+<input type="checkbox" value="animate image" id="animate_img"/>
 </div>
 <div>
 Errors:
