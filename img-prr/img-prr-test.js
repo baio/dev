@@ -192,10 +192,10 @@
         process: srvParams,
         animateCss: $("#animate_img").attr("checked") ? "img-prr-animated" : void 0,
         success: function(img, errors) {
-          var himg, p, _i, _len;
+          var himg, p, _k, _len3;
           himg = $(img);
-          for (_i = 0, _len = cltParams.length; _i < _len; _i++) {
-            p = cltParams[_i];
+          for (_k = 0, _len3 = cltParams.length; _k < _len3; _k++) {
+            p = cltParams[_k];
             himg = himg.pixastic(p.process, p.params ? eval('(' + p.params + ')') : null);
           }
           $("#prc_errors").text("");
