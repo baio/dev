@@ -67,6 +67,7 @@ class ImageProcessorPresenter
                                     src : img.src
                                     width : img.width
                                     height : img.height
+                                $(img).css position : "absolute"
 
                                 $(@).after newImg
                                 img = newImg
@@ -90,6 +91,7 @@ class ImageProcessorPresenter
 
                                             setInterval( ->
                                                      $(img).addClass s.animateCss
+                                                     #$(img).css display : "block"
                                                 , 1)
 
                                 ImageProcessorPresenter.data(@).animateImg = img
@@ -207,7 +209,7 @@ $.fn.extend
                  data = ImageProcessorPresenter.data @
 
                  if data
-                    if data.prr.imageCss
+                    if data.prr.settings.animateCss
                         if data.animateImg
                             $(data.animateImg).remove()
                     $(@).replaceWith data.orig

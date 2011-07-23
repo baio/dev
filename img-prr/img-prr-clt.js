@@ -55,6 +55,9 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
                   width: img.width,
                   height: img.height
                 });
+                $(img).css({
+                  position: "absolute"
+                });
                 $(this).after(newImg);
                 img = newImg;
               }
@@ -174,7 +177,7 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             var data;
             data = ImageProcessorPresenter.data(this);
             if (data) {
-              if (data.prr.imageCss) {
+              if (data.prr.settings.animateCss) {
                 if (data.animateImg) {
                   $(data.animateImg).remove();
                 }
