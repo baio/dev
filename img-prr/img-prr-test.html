@@ -17,24 +17,40 @@
 
     <style type="text/css">
     </style>
+    <!--
+    <link id="agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRj3uQcM" rel="stylesheet" type="text/css" href="http://www.webputty.net/css/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRj3uQcM" />
+    <script type="text/javascript" src="http://www.webputty.net/js/agtzfmNzc2ZpZGRsZXIMCxIEUGFnZRj3uQcM"></script>
+    -->
+    
 </head>
 <body>
+<div class="caption rounded" >
+Image processing is available on the both ends of wire now, with processing steps queue! The client side is provided by excelent <a href="http://www.pixastic.com/lib/" target="balnk">
+pixastic</a> library and the server processing is granted by <a href="http://www.graphicsmagick.org/" target="balnk">graphic magic</a>, <a href="http://nodejs.org/" target="balnk">node.js</a> 
+and <a href="https://github.com/aheckmann/gm" target="blank">gm for node</a>. Special thanks to
+<a href="http://net.tutsplus.com/tutorials/javascript-ajax/how-to-transition-an-image-from-bw-to-color-with-canvas/" target="balnk">net.tuts</a> and <a href="http://www.maxnov.com/getimagedata/" target="balnk">Max Novacovic</a> 
+who pointed out how to walk around the domain's own image problem. The general descrition 
+of the project available <a href="#" target="blank">here</a>.
+</div>
 <section>
 <div>
     Image url:
     <input style="width:50%" type="text" value="http://www.wikinoticia.com/images/elgeeky.com/elgeeky.com.wp-content.south.jpg" id="img_url"/>
     <button id="img_process" class="awesome-button"/>PROCESS IT!</button><input type="checkbox" id="animate_img"/>animate image
 </div>
-<div width="100%">
-    <div style="display: table-cell;" >
+</section>
+<div width="100%" id="imgs_container">
+    <div id="left-img">
         Source image:<br/>
-        <img src="" alt="source image" id="img_src" />
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=" alt="source image" id="img_src" />
     </div>
-    <div style="display: table-cell; ">
+    <div id="right-img">
         Processed image:<br/>
-        <img src="" alt="source image" id="img_dest" />
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII=" alt="proccessed image" id="img_dest" />
     </div>
 </div>
+<div style="clear:both"/>
+<section>
 <div>
     <h3 calss="left-only">Client process</h3>
      <div class="descr"><a href="http://www.pixastic.com/lib/docs/">Description</a> of functions and their paramteres.</div>

@@ -7,6 +7,7 @@ body {
 }
 
 
+
 div {
     border-style: none;
 }
@@ -15,6 +16,7 @@ section {
    width: 80%;
    margin: 0 auto;
 }
+
 
 .awesome-button{
 background: #ffb515;
@@ -61,10 +63,41 @@ h3:after {
   left: 100%;
 }
 
- .left-only:after {
-      display: none;
-    }
 
-.right-only:before {
-  width: 20px;
+#left-img {
+    float: left;
+}
+
+#right-img {
+	float: right;
+}
+
+#imgs_container
+{
+    overflow: auto;
+    width: 100%
+}
+
+.rounded  {
+
+    -moz-border-radius: 10px; /* gecko */
+
+    -webkit-border-radius: 10px; /* webkit */
+
+    border-radius: 10px; /* CSS3 standard */
+
+    -khtml-border-radius: 10px; /* old konkeror */
+}
+
+.caption
+{
+    font-size: 28px;
+    background:#FFFFFF; 
+    margin: 10px 0px 10px 0px; 
+    padding: 5px;
+}
+
+img
+{
+    src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIUlEQVQYV2PUsiz9f+14NyMDAQBWQIxigibBLBpViDfIAQHVCAsXci+BAAAAAElFTkSuQmCC"
 }

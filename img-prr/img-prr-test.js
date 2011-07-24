@@ -57,9 +57,9 @@
         direction: "topright"
       }
     }, {
-      name: "FlipHorizontally"
+      name: "FlipH"
     }, {
-      name: "FlipVertically"
+      name: "FlipV"
     }, {
       name: "Glow",
       def: {

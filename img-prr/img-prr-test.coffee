@@ -12,8 +12,8 @@ client_processes = [
     {name : "EdgeDetection", def : {mono:true, invert:false}}
     {name : "EdgeDetection2"}
     {name : "Emboss", def : {greyLevel:100,direction:"topright"}}
-    {name : "FlipHorizontally"}
-    {name : "FlipVertically"}
+    {name : "FlipH"}
+    {name : "FlipV"}
     {name : "Glow", def : {amount:0.5,radius:1.0}}
     {name : "Histogram", disabled : true}
     {name : "Hue", def : {hue:30,saturation:20,lightness:0}}

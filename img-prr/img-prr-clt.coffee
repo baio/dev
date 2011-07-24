@@ -169,10 +169,12 @@ $.fn.extend
                 if s.server.indexOf("?callback=") == -1
                     s.server = "#{s.server}?callback=?"
 
-                attr = $t.attr "src"
+                if !s.src
 
-                if attr
-                    s.src = attr
+                    attr = $t.attr "src"
+    
+                    if attr
+                        s.src = attr
 
                 if !s.src
                     throw "ImageProcessor.src attribute must be defined!"

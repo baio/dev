@@ -122,14 +122,14 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             $t = $(this);
             orig = $(this).clone()[0];
             /*
-                id : @id
-                name : @name
-                width : @width
-                height : @height
-                src : @src
-                alt : @alt
-                style : @style
-            */
+                                id : @id
+                                name : @name
+                                width : @width
+                                height : @height
+                                src : @src
+                                alt : @alt
+                                style : @style
+                            */
             attr = $t.attr("data-img-prr-server");
             if (attr) {
               s.server = attr;
@@ -140,9 +140,11 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             if (s.server.indexOf("?callback=") === -1) {
               s.server = "" + s.server + "?callback=?";
             }
-            attr = $t.attr("src");
-            if (attr) {
-              s.src = attr;
+            if (!s.src) {
+              attr = $t.attr("src");
+              if (attr) {
+                s.src = attr;
+              }
             }
             if (!s.src) {
               throw "ImageProcessor.src attribute must be defined!";
