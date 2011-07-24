@@ -114,9 +114,7 @@ class ImageProcessor
 
         "new"
 
-        "noise1"
-
-        "noise2"
+        "noise"
 
         "paint"
 

@@ -142,9 +142,9 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             }
             if (!s.src) {
               attr = $t.attr("src");
-              if (attr) {
-                s.src = attr;
-              }
+            }
+            if (attr) {
+              s.src = attr;
             }
             if (!s.src) {
               throw "ImageProcessor.src attribute must be defined!";

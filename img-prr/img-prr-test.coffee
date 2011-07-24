@@ -64,9 +64,8 @@ server_processes = [
           "monochrome"
           name : "morph", disabled : true
           "negative"
-          "new"
-          "noise1"
-          "noise2"
+          name : "new", disabled : true
+          "noise"
           "paint"
           "quality"
           "raise"
