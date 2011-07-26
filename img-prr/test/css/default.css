@@ -1,0 +1,77 @@
+#header
+{
+    text-align: center;
+    font-family: a_Stamper;
+    font-size: 48px;
+}
+
+#left
+{
+    text-align: center;
+    font-family: B52;
+    font-size: 20px;
+}
+
+#left li
+{
+    list-style-type: none;
+}
+
+#footer
+{
+    color: gray;
+    font-size: 10px;
+    font-family: Calibri;
+    text-align: center;
+}
+
+#main
+{
+    font-size: 15px;
+    font-family: TypeWriter;
+}
+
+.article-header
+{
+    font-size: 28px;
+    font-family: a_Stamper;
+    text-align: center;
+}
+
+.tag
+{
+    text-align: left;
+    font-family: B52;
+    font-size: 18px;
+}
+
+.article
+{
+    padding: 5px;
+    margin-top: 30px;
+}
+
+.article-decorator
+{
+    color: gray;
+    font-size: 12px;
+    font-family: Calibri;
+    text-align: center;
+    text-align: right;
+    margin: -5px;
+}
+
+#footer a,
+.article-decorator a
+{
+    border-width: thin;
+    color: gray;
+    text-decoration: none;
+}
+
+#footer a:hover,
+.article-decorator a:hover
+{
+    border-bottom-style: dotted;
+    border-top-style: dotted;
+}

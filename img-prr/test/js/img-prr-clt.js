@@ -44,39 +44,44 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
           timeout: 10000,
           success: function(data, status) {
             return $(s.img).load(function() {
-              var himg, img, overlayImg;
+              var himg, img, newImg;
               if (!s.restoreOrigSize) {
                 this.width = data.width;
                 this.height = data.height;
               }
+              img = this;
+              if (s.animateCss) {
+                newImg = new Image();
+                $(newImg).attr({
+                  src: img.src,
+                  width: img.width,
+                  height: img.height
+                });
+                $(img).css({
+                  position: "absolute"
+                });
+                $(this).after(newImg);
+                img = newImg;
+              }
               $(this).show();
               if ($.isFunction(s.success)) {
-                img = this;
-                if (s.animateCss) {
-                  overlayImg = new Image();
-                  $(overlayImg).attr({
-                    src: this.src,
-                    width: this.width,
-                    height: this.height
-                  });
-                  img = overlayImg;
-                }
                 himg = s.success(img, data.errors);
-                if (s.animateCss) {
-                  $(himg).css({
-                    position: "absolute"
-                  });
-                  $(this).before(himg);
-                  $(himg).position({
-                    of: $(this),
-                    at: "left bottom",
-                    my: "left bottom"
-                  });
-                  setInterval(function() {
-                    return $(himg).addClass(s.animateCss, 1);
-                  });
-                  return ImageProcessorPresenter.data(this).overlayImg = himg;
+                if (himg != null) {
+                  img = himg;
                 }
+                if (img) {
+                  if (s.animateCss) {
+                    $(img).position({
+                      of: $(this),
+                      at: "left top",
+                      my: "left top"
+                    });
+                    setInterval(function() {
+                      return $(img).addClass(s.animateCss);
+                    }, 1);
+                  }
+                }
+                return ImageProcessorPresenter.data(this).animateImg = img;
               }
             }).attr('src', data.data);
           },
@@ -178,8 +183,8 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
             data = ImageProcessorPresenter.data(this);
             if (data) {
               if (data.prr.settings.animateCss) {
-                if (data.overlayImg) {
-                  $(data.overlayImg).remove();
+                if (data.animateImg) {
+                  $(data.animateImg).remove();
                 }
               }
               $(this).replaceWith(data.orig);

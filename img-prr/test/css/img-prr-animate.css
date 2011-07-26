@@ -1,0 +1,16 @@
+
+/* Handles animation of b*w to color */
+.img-prr-animated {
+    position: absolute;
+    opacity: 1;
+    -webkit-transition: all 1s;
+    -moz-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+    transition: all 1s;
+}
+
+.img-prr-animated:hover {
+    opacity: 0;
+}
+

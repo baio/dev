@@ -55,50 +55,46 @@ class ImageProcessorPresenter
                 success: (data, status) ->
                     $(s.img).load( ->
 
-                            #necessary to set restoreOrigSize in case of image resizing,
-                            #in over case image will be resized on the server, but size will be
-                            #restored to original here
                             if !s.restoreOrigSize
                                 @width = data.width
                                 @height = data.height
 
+                            img = @
+
+                            if s.animateCss
+
+                                newImg = new Image()
+                                $(newImg).attr
+                                    src : img.src
+                                    width : img.width
+                                    height : img.height
+                                $(img).css position : "absolute"
+
+                                $(@).after newImg
+                                img = newImg
 
                             $(@).show()
 
                             if $.isFunction s.success
 
-                                img = @
-
-                                if s.animateCss
-                                    #new image for overlay animation
-                                    overlayImg = new Image()
-
-                                    $(overlayImg).attr
-                                        src : @src
-                                        width : @width
-                                        height : @height
-
-                                    img = overlayImg
-
                                 himg = s.success img, data.errors
 
-                                if s.animateCss
-                                      #overlay original image
-                                      $(himg).css position : "absolute"
-                                      $(@).before himg
-                                      $(himg).position
-                                            of : $(@),
-                                            at : "left bottom"
-                                            my : "left bottom"
+                                img = himg if himg?
 
-                                      setInterval( ->
+                                if img
 
-                                             $(himg).addClass s.animateCss
+                                    #lay over animate canvas
+                                    if s.animateCss
+                                          $(img).position
+                                                of : $(@),
+                                                at : "left top"
+                                                my : "left top"
 
-                                             , 1)
+                                            setInterval( ->
+                                                     $(img).addClass s.animateCss
+                                                , 1)
 
-                                      ImageProcessorPresenter.data(@).overlayImg = himg
-
+                                ImageProcessorPresenter.data(@).animateImg = img
 
                     ).attr 'src', data.data
 
@@ -218,8 +214,8 @@ $.fn.extend
 
                  if data
                     if data.prr.settings.animateCss
-                        if data.overlayImg
-                            $(data.overlayImg).remove()
+                        if data.animateImg
+                            $(data.animateImg).remove()
                     $(@).replaceWith data.orig
                     ImageProcessorPresenter.removeData @
 
