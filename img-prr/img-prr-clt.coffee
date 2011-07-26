@@ -84,14 +84,18 @@ class ImageProcessorPresenter
 
                                 if s.animateCss
                                       #overlay original image
+
                                       $(himg).css position : "absolute"
-                                      $(@).before himg
+
+                                      $(@).after himg
                                       $(himg).position
-                                            of : $(@),
-                                            at : "left bottom"
-                                            my : "left bottom"
+                                           of : $(@),
+                                           at : "left top"
+                                           my : "left top"
+
 
                                       setInterval( ->
+
 
                                              $(himg).addClass s.animateCss
 

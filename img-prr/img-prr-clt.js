@@ -66,11 +66,11 @@ f=d("head")[0]||document.documentElement,q={},S=0,p,C={callback:L,url:location.h
                   $(himg).css({
                     position: "absolute"
                   });
-                  $(this).before(himg);
+                  $(this).after(himg);
                   $(himg).position({
                     of: $(this),
-                    at: "left bottom",
-                    my: "left bottom"
+                    at: "left top",
+                    my: "left top"
                   });
                   setInterval(function() {
                     return $(himg).addClass(s.animateCss, 1);
