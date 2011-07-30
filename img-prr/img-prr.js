@@ -1,11 +1,34 @@
 (function() {
-  var ImageProcessor, app, express, fs, gm, http, r, utils960gs;
+  var ImageProcessor, app, express, fs, gm, http, r, utils960gs, utilsSize;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   express = require('express');
   gm = require('gm');
   http = require('http');
   fs = require('fs');
   r = require('request');
+  utilsSize = (function() {
+    function utilsSize() {}
+    utilsSize.getHeight = function(origSize, width) {
+      return Math.floor(origSize.height * (width / origSize.width));
+    };
+    utilsSize.fitSize = function(origSize, szList) {
+      var s, sz, _i, _len;
+      sz = {
+        width: origSize.width,
+        height: origSize.height
+      };
+      for (_i = 0, _len = szList.length; _i < _len; _i++) {
+        s = szList[_i];
+        if (s >= origSize.width) {
+          break;
+        }
+      }
+      sz.width = s;
+      sz.height = this.getHeight(origSize, sz.width);
+      return sz;
+    };
+    return utilsSize;
+  })();
   utils960gs = (function() {
     function utils960gs() {}
     utils960gs.getWidth = function(colNums) {
@@ -17,14 +40,14 @@
     utils960gs.getSize = function(origSize, colNums) {
       var h, w;
       w = this.getWidth(colNums);
-      h = this.getHeight(origSize, w);
+      h = utilsSize.getHeight(origSize, w);
       return {
         width: w,
         height: h
       };
     };
     utils960gs.fitSize = function(origSize, colList) {
-      var c, colNums, sz, _i, _len;
+      var c, colNums, sz;
       colNums = Math.floor(origSize.width / 80);
       if (colNums === 0) {
         colNums = 1;
@@ -39,14 +62,15 @@
         sz = this.fitSize(sz);
       }
       if (colList) {
-        for (_i = 0, _len = colList.length; _i < _len; _i++) {
-          c = colList[_i];
-          if (this.getWidth(c) >= sz.width) {
-            break;
+        sz = utilsSize.fitSize(origSize, (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = colList.length; _i < _len; _i++) {
+            c = colList[_i];
+            _results.push(this.getWidth(c));
           }
-        }
-        sz.width = this.getWidth(c);
-        sz.height = this.getHeight(origSize, sz.width);
+          return _results;
+        }).call(this));
       }
       return sz;
     };
@@ -223,7 +247,17 @@
           break;
         case "px":
           fmt = null;
-          break;
+          if (width.indexOf("|" !== -1)) {
+            gm(TMP_FILE_NAME).size(__bind(function(err, size) {
+              var sz;
+              if (!err) {
+                sz = utilsSize.fitSize(size, width.split("|"));
+                console.log("px calculated : width: " + size.width + " -> " + sz.width + " height: " + size.height + " -> " + sz.height);
+                return this.resize(sz, callback, index);
+              }
+            }, this));
+          }
+          return;
         case "960gs":
           gm(TMP_FILE_NAME).size(__bind(function(err, size) {
             var sz;

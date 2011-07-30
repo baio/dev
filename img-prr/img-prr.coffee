@@ -5,6 +5,19 @@ fs = require 'fs'
 r = require 'request'
 #gs960 = require './utils960gs'
 
+class utilsSize
+
+    @getHeight: (origSize, width) ->
+        Math.floor origSize.height * (width / origSize.width)
+
+    @fitSize: (origSize, szList) ->             
+        sz = width : origSize.width, height : origSize.height        
+        for s in szList
+            break if s >= origSize.width                                       
+         sz.width = s
+         sz.height = @getHeight origSize, sz.width
+         sz
+
 class utils960gs
 
     @getWidth: (colNums) ->
@@ -15,7 +28,7 @@ class utils960gs
 
     @getSize: (origSize, colNums) ->
         w = @getWidth colNums
-        h = @getHeight origSize, w
+        h = utilsSize.getHeight origSize, w
         width : w, height : h
 
     @fitSize: (origSize, colList) ->
@@ -29,12 +42,7 @@ class utils960gs
             sz = @fitSize sz
         
         if colList
-             
-             for c in colList
-                break if @getWidth(c) >= sz.width
-                                           
-             sz.width = @getWidth c
-             sz.height = @getHeight origSize, sz.width
+            sz = utilsSize.fitSize origSize, (@getWidth c for c in colList)
         sz
 
 class ImageProcessor
@@ -303,7 +311,17 @@ class ImageProcessor
             
         switch fmt
             when "%" then break
-            when "px" then fmt = null
+            when "px" 
+                fmt = null
+                if width.indexOf "|" != -1
+                    gm(TMP_FILE_NAME).size (err, size) =>
+                        if !err
+                            sz = utilsSize.fitSize size, width.split "|"
+                            
+                            console.log "px calculated : width: #{size.width} -> #{sz.width} height: #{size.height} -> #{sz.height}"
+                        
+                            @resize sz, callback, index
+                return;
             when "960gs" 
                 gm(TMP_FILE_NAME).size (err, size) =>
                     if !err
