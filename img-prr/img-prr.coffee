@@ -2,8 +2,26 @@ express = require 'express'
 gm = require 'gm'
 http = require 'http'
 fs = require 'fs'
-r = require 'request'
+req = require 'request'
 #gs960 = require './utils960gs'
+
+class utilsSize
+
+    @getHeight: (origSize, width) ->
+        Math.floor origSize.height * (width / origSize.width)
+
+    @fitSize: (origSize, szList) ->             
+        checkRange = (orig, szp, sz, szn) ->
+            if !szn then return true
+            szp ?= 0
+            r = left : sz - (sz - szp) / 2, right : szn - (szn - sz) / 2
+            r.left <  orig <= r.right
+        sz = width : origSize.width, height : origSize.height        
+        for i in [0..szList.length - 1]
+            break if checkRange origSize.width, szList[i-1], szList[i], szList[i + 1]                                       
+         sz.width = szList[i]
+         sz.height = @getHeight origSize, sz.width
+         sz
 
 class utils960gs
 
@@ -15,14 +33,22 @@ class utils960gs
 
     @getSize: (origSize, colNums) ->
         w = @getWidth colNums
-        h = @getHeight origSize, w
+        h = utilsSize.getHeight origSize, w
         width : w, height : h
 
-    @fitSize: (origSize) ->
+    @fitSize: (origSize, colList) ->
         colNums = Math.floor origSize.width / 80
         colNums = 1 if colNums == 0
         colNums = 12  if colNums > 12
-        @getSize origSize, colNums
+        sz = @getSize origSize, colNums
+        if sz.height > 300
+            sz.height = 300
+            sz.width = Math.floor origSize.width * (sz.height / origSize.height)
+            sz = @fitSize sz
+        
+        if colList
+            sz = utilsSize.fitSize origSize, (@getWidth c for c in colList)
+        sz
 
 class ImageProcessor
         
@@ -187,7 +213,7 @@ class ImageProcessor
                             
     proccess: ->
         errors = []
-        r uri : @options.settings.url, encoding : "binary",  (error, response, body) => 
+        req uri : @options.settings.url, encoding : "binary",  (error, response, body) => 
                     @handleResponse error, response, body   
                     null
             
@@ -279,7 +305,7 @@ class ImageProcessor
                 return
 
             width = prms[0]
-            
+                        
             if !isNaN prms[1]
                 height = prms[1]
                 fmt = prms[2]
@@ -290,12 +316,24 @@ class ImageProcessor
             
         switch fmt
             when "%" then break
-            when "px" then fmt = null
+            when "px" 
+                fmt = null
+                if width.indexOf "|" != -1
+                    gm(TMP_FILE_NAME).size (err, size) =>
+                        if !err
+                            sz = utilsSize.fitSize size, width.split "|"
+                            
+                            console.log "px calculated : width: #{size.width} -> #{sz.width} height: #{size.height} -> #{sz.height}"
+                        
+                            @resize sz, callback, index
+                return;
             when "960gs" 
                 gm(TMP_FILE_NAME).size (err, size) =>
                     if !err
                         if width == "fit" 
                             sz = utils960gs.fitSize size 
+                        else if width.indexOf "|" != -1
+                            sz = utils960gs.fitSize size, width.split "|"
                         else
                             sz = utils960gs.getSize size, width
                         
