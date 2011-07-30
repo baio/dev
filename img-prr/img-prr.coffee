@@ -18,11 +18,24 @@ class utils960gs
         h = @getHeight origSize, w
         width : w, height : h
 
-    @fitSize: (origSize) ->
+    @fitSize: (origSize, colList) ->
         colNums = Math.floor origSize.width / 80
         colNums = 1 if colNums == 0
         colNums = 12  if colNums > 12
-        @getSize origSize, colNums
+        sz = @getSize origSize, colNums
+        if sz.height > 300
+            sz.height = 300
+            sz.width = Math.floor origSize.width * (sz.height / origSize.height)
+            sz = @fitSize sz
+        
+        if colList
+             
+             for c in colList
+                break if @getWidth(c) >= sz.width
+                                           
+             sz.width = @getWidth c
+             sz.height = @getHeight origSize, sz.width
+        sz
 
 class ImageProcessor
         
@@ -279,7 +292,7 @@ class ImageProcessor
                 return
 
             width = prms[0]
-            
+                        
             if !isNaN prms[1]
                 height = prms[1]
                 fmt = prms[2]
@@ -296,6 +309,8 @@ class ImageProcessor
                     if !err
                         if width == "fit" 
                             sz = utils960gs.fitSize size 
+                        else if width.indexOf "|" != -1
+                            sz = utils960gs.fitSize size, width.split "|"
                         else
                             sz = utils960gs.getSize size, width
                         

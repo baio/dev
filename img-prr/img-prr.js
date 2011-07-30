@@ -23,8 +23,8 @@
         height: h
       };
     };
-    utils960gs.fitSize = function(origSize) {
-      var colNums;
+    utils960gs.fitSize = function(origSize, colList) {
+      var c, colNums, sz, _i, _len;
       colNums = Math.floor(origSize.width / 80);
       if (colNums === 0) {
         colNums = 1;
@@ -32,7 +32,23 @@
       if (colNums > 12) {
         colNums = 12;
       }
-      return this.getSize(origSize, colNums);
+      sz = this.getSize(origSize, colNums);
+      if (sz.height > 300) {
+        sz.height = 300;
+        sz.width = Math.floor(origSize.width * (sz.height / origSize.height));
+        sz = this.fitSize(sz);
+      }
+      if (colList) {
+        for (_i = 0, _len = colList.length; _i < _len; _i++) {
+          c = colList[_i];
+          if (this.getWidth(c) >= sz.width) {
+            break;
+          }
+        }
+        sz.width = this.getWidth(c);
+        sz.height = this.getHeight(origSize, sz.width);
+      }
+      return sz;
     };
     return utils960gs;
   })();
@@ -214,6 +230,8 @@
             if (!err) {
               if (width === "fit") {
                 sz = utils960gs.fitSize(size);
+              } else if (width.indexOf("|" !== -1)) {
+                sz = utils960gs.fitSize(size, width.split("|"));
               } else {
                 sz = utils960gs.getSize(size, width);
               }
