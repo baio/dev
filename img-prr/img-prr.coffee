@@ -2,7 +2,7 @@ express = require 'express'
 gm = require 'gm'
 http = require 'http'
 fs = require 'fs'
-r = require 'request'
+req = require 'request'
 #gs960 = require './utils960gs'
 
 class utilsSize
@@ -11,10 +11,15 @@ class utilsSize
         Math.floor origSize.height * (width / origSize.width)
 
     @fitSize: (origSize, szList) ->             
+        checkRange = (orig, szp, sz, szn) ->
+            if !szn then return true
+            szp ?= 0
+            r = left : sz - (sz - szp) / 2, right : szn - (szn - sz) / 2
+            r.left <  orig <= r.right
         sz = width : origSize.width, height : origSize.height        
-        for s in szList
-            break if s >= origSize.width                                       
-         sz.width = s
+        for i in [0..szList.length - 1]
+            break if checkRange origSize.width, szList[i-1], szList[i], szList[i + 1]                                       
+         sz.width = szList[i]
          sz.height = @getHeight origSize, sz.width
          sz
 
@@ -208,7 +213,7 @@ class ImageProcessor
                             
     proccess: ->
         errors = []
-        r uri : @options.settings.url, encoding : "binary",  (error, response, body) => 
+        req uri : @options.settings.url, encoding : "binary",  (error, response, body) => 
                     @handleResponse error, response, body   
                     null
             

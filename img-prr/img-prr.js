@@ -1,29 +1,44 @@
 (function() {
-  var ImageProcessor, app, express, fs, gm, http, r, utils960gs, utilsSize;
+  var ImageProcessor, app, express, fs, gm, http, req, utils960gs, utilsSize;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   express = require('express');
   gm = require('gm');
   http = require('http');
   fs = require('fs');
-  r = require('request');
+  req = require('request');
   utilsSize = (function() {
     function utilsSize() {}
     utilsSize.getHeight = function(origSize, width) {
       return Math.floor(origSize.height * (width / origSize.width));
     };
     utilsSize.fitSize = function(origSize, szList) {
-      var s, sz, _i, _len;
+      var checkRange, i, sz, _ref;
+      checkRange = function(orig, szp, sz, szn) {
+        var r;
+        if (!szn) {
+          return true;
+        }
+                if (szp != null) {
+          szp;
+        } else {
+          szp = 0;
+        };
+        r = {
+          left: sz - (sz - szp) / 2,
+          right: szn - (szn - sz) / 2
+        };
+        return (r.left < orig && orig <= r.right);
+      };
       sz = {
         width: origSize.width,
         height: origSize.height
       };
-      for (_i = 0, _len = szList.length; _i < _len; _i++) {
-        s = szList[_i];
-        if (s >= origSize.width) {
+      for (i = 0, _ref = szList.length - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+        if (checkRange(origSize.width, szList[i - 1], szList[i], szList[i + 1])) {
           break;
         }
       }
-      sz.width = s;
+      sz.width = szList[i];
       sz.height = this.getHeight(origSize, sz.width);
       return sz;
     };
@@ -137,7 +152,7 @@
     };
     ImageProcessor.prototype.proccess = function() {
       errors = [];
-      return r({
+      return req({
         uri: this.options.settings.url,
         encoding: "binary"
       }, __bind(function(error, response, body) {
