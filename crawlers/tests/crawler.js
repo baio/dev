@@ -28,10 +28,11 @@
         encoding: "utf-8",
         method: 'GET',
         headers: {
-          'content-type': "text/html; charset=utf-8"
+          'content-type': "text/html; charset=utf8"
         }
       }, __bind(function(error, response, body) {
         try {
+          console.log(body);
           if (!error) {
             return this.getJQuery(response, body, __bind(function($) {
               var res;

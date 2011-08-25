@@ -4,8 +4,12 @@ fs = require 'fs'
 jsdom = require 'jsdom'
 html5 = require 'html5' #https://github.com/aredridel/html5
 window = jsdom.jsdom().createWindow null, null,  parser : html5
+Iconv = require('iconv').Iconv
+Url = require 'url'
 
 class crawler
+    
+    TMP_FILE_NAME = null
     
     response = null
     
@@ -22,24 +26,31 @@ class crawler
     constructor: (@response, @settings)->
         
     crawl: ->
+                    
+        TMP_FILE_NAME = "crawler_#{Date.now()}_temp.html"
  
         request
          
             uri : @settings.url 
             
-            encoding : "utf-8"
+            encoding : "binary"
                         
             method: 'GET'
-            
+                        
             (error, response, body) =>
                 
                 try
+                                             
+                    iconv = new Iconv 'windows-1251', 'UTF-8'
+                                        
+                    body = new Buffer body, 'binary'
                     
-                    console.log body
+                    body = iconv.convert(body).toString()
                     
+                                    
                     if !error
                         
-                        @getJQuery response, body, ($)=>
+                        @getJQuery response, body, ($)=>             
                                 
                                 switch @settings.type 
                                         when "details" then res = @getDetails $
@@ -49,6 +60,7 @@ class crawler
                                 @onSuccess res
                 catch err
                     @onError err
+                            
     
     getJQuery: (response, body, callback) ->
         
@@ -56,7 +68,7 @@ class crawler
             
             
     getJQuerySimple: (response, body, callback, fallback) ->
-        
+                
         console.log "getJQuerySimple"
                         
         try
@@ -81,27 +93,31 @@ class crawler
         console.log "getJQueryHtml5" 
         #console.log body        
 
-        fs.writeFile '/home/bitnami/dev/crawlers/tests/test.html', body,  ->
+        fs.writeFile "/home/bitnami/dev/crawlers/" + TMP_FILE_NAME, body, ->
             console.log "written"            
             
             clt = http.createClient 8085, "91.205.189.32"
-            req = clt.request 'GET', '/workspace/crawlers/tests/test.html', 'host': '91.205.189.32'
+            req = clt.request 'GET', "/workspace/crawlers/" + TMP_FILE_NAME, 'host': '91.205.189.32'
             
             req.end()
             req.on 'response',  (response) ->
                             
+                console.log "response"
+                
+                fs.unlink "/home/bitnami/dev/crawlers/" + TMP_FILE_NAME
+                                    
                 parser = new html5.Parser document : window.document
         
                 parser.parse response
                 
-                jsdom.jQueryify window, 'http://code.jquery.com/jquery-latest.min.js', (window, $)->
-                        console.log $('body').text()
+                jsdom.jQueryify window, 'http://code.jquery.com/jquery-latest.min.js', (window, $)=>
+                        callback $
 
     getDetails: ($)->
         
-        #$("a").foreach ->
-        #    console.log @
-        #console.log "start getDetails : #{$("body").text()}"
+        $("a").each ->
+            console.log $(@).html()
+        
         
             
     getContent: ($)->
@@ -113,11 +129,11 @@ class crawler
         
     onError: (error)->
         console.log "Error : " + error
-        
+                
 console.log "start"
 
 cr = new crawler null
-            url : "http://www.lenta.ru/news/2011/08/23/suspect/"
+            url : "http://www.lenta.ru/articles/2011/08/25/mirzaev/"
             type : "details"
             
 cr.crawl()

@@ -1,5 +1,5 @@
 (function() {
-  var cr, crawler, fs, html5, http, jsdom, request, window;
+  var Iconv, Url, cr, crawler, fs, html5, http, jsdom, request, window;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   http = require('http');
   request = require('request');
@@ -9,8 +9,11 @@
   window = jsdom.jsdom().createWindow(null, null, {
     parser: html5
   });
+  Iconv = require('iconv').Iconv;
+  Url = require('url');
   crawler = (function() {
-    var response, settings;
+    var TMP_FILE_NAME, response, settings;
+    TMP_FILE_NAME = null;
     response = null;
     settings = {
       url: null,
@@ -23,13 +26,17 @@
       this.settings = settings;
     }
     crawler.prototype.crawl = function() {
+      TMP_FILE_NAME = "crawler_" + (Date.now()) + "_temp.html";
       return request({
         uri: this.settings.url,
-        encoding: "utf-8",
+        encoding: "binary",
         method: 'GET'
       }, __bind(function(error, response, body) {
+        var iconv;
         try {
-          console.log(body);
+          iconv = new Iconv('windows-1251', 'UTF-8');
+          body = new Buffer(body, 'binary');
+          body = iconv.convert(body).toString();
           if (!error) {
             return this.getJQuery(response, body, __bind(function($) {
               var res;
@@ -71,27 +78,33 @@
     };
     crawler.prototype.getJQueryHtml5 = function(response, body, callback) {
       console.log("getJQueryHtml5");
-      return fs.writeFile('/home/bitnami/dev/crawlers/tests/test.html', body, function() {
+      return fs.writeFile("/home/bitnami/dev/crawlers/" + TMP_FILE_NAME, body, function() {
         var clt, req;
         console.log("written");
         clt = http.createClient(8085, "91.205.189.32");
-        req = clt.request('GET', '/workspace/crawlers/tests/test.html', {
+        req = clt.request('GET', "/workspace/crawlers/" + TMP_FILE_NAME, {
           'host': '91.205.189.32'
         });
         req.end();
         return req.on('response', function(response) {
           var parser;
+          console.log("response");
+          fs.unlink("/home/bitnami/dev/crawlers/" + TMP_FILE_NAME);
           parser = new html5.Parser({
             document: window.document
           });
           parser.parse(response);
-          return jsdom.jQueryify(window, 'http://code.jquery.com/jquery-latest.min.js', function(window, $) {
-            return console.log($('body').text());
-          });
+          return jsdom.jQueryify(window, 'http://code.jquery.com/jquery-latest.min.js', __bind(function(window, $) {
+            return callback($);
+          }, this));
         });
       });
     };
-    crawler.prototype.getDetails = function($) {};
+    crawler.prototype.getDetails = function($) {
+      return $("a").each(function() {
+        return console.log($(this).html());
+      });
+    };
     crawler.prototype.getContent = function($) {};
     crawler.prototype.onSuccess = function(data) {
       return console.log("Success : " + data);
@@ -103,7 +116,7 @@
   })();
   console.log("start");
   cr = new crawler(null, {
-    url: "http://www.lenta.ru/news/2011/08/23/suspect/",
+    url: "http://www.lenta.ru/articles/2011/08/25/mirzaev/",
     type: "details"
   });
   cr.crawl();

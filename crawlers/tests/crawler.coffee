@@ -31,13 +31,13 @@ class crawler
                         
             method: 'GET'
             
-            headers: {'content-type' :  "text/html; charset=utf-8"}
+            headers: {'content-type' :  "text/html; charset=utf8"}
             
             (error, response, body) =>
                 
                 try
                     
-                    #console.log body
+                    console.log body
                     
                     if !error
                         
