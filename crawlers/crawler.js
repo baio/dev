@@ -32,9 +32,11 @@
         encoding: "binary",
         method: 'GET'
       }, __bind(function(error, response, body) {
-        var iconv;
+        var encoding, iconv, regex;
         try {
-          iconv = new Iconv('windows-1251', 'UTF-8');
+          regex = new RegExp("charset=([\\w-]+)");
+          encoding = regex.exec(response.headers["content-type"])[1].toUpperCase();
+          iconv = new Iconv(encoding, 'UTF-8');
           body = new Buffer(body, 'binary');
           body = iconv.convert(body).toString();
           if (!error) {
@@ -116,7 +118,7 @@
   })();
   console.log("start");
   cr = new crawler(null, {
-    url: "http://www.lenta.ru/articles/2011/08/25/mirzaev/",
+    url: "http://www.livejournal.ru/themes/id/34176",
     type: "details"
   });
   cr.crawl();

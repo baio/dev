@@ -40,8 +40,12 @@ class crawler
             (error, response, body) =>
                 
                 try
+                    
+                    regex = new RegExp "charset=([\\w-]+)"
+                    
+                    encoding = regex.exec(response.headers["content-type"])[1].toUpperCase()
                                              
-                    iconv = new Iconv 'windows-1251', 'UTF-8'
+                    iconv = new Iconv encoding, 'UTF-8'
                                         
                     body = new Buffer body, 'binary'
                     
@@ -117,9 +121,7 @@ class crawler
         
         $("a").each ->
             console.log $(@).html()
-        
-        
-            
+      
     getContent: ($)->
         
         #console.log "start getContent : #{$("body").text()}"
@@ -133,7 +135,7 @@ class crawler
 console.log "start"
 
 cr = new crawler null
-            url : "http://www.lenta.ru/articles/2011/08/25/mirzaev/"
+            url : "http://www.livejournal.ru/themes/id/34176"
             type : "details"
             
 cr.crawl()
