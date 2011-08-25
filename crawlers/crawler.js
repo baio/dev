@@ -1,5 +1,5 @@
 (function() {
-  var Iconv, Url, cr, crawler, fs, html5, http, jsdom, request, window;
+  var Iconv, Url, cr, crawler, fs, html5, http, jsdom, lentaHandler, request, window;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   http = require('http');
   request = require('request');
@@ -18,7 +18,7 @@
     settings = {
       url: null,
       type: "details",
-      onSuccess: null,
+      handlers: [],
       onError: null
     };
     function crawler(response, settings) {
@@ -103,9 +103,15 @@
       });
     };
     crawler.prototype.getDetails = function($) {
-      return $("a").each(function() {
-        return console.log($(this).html());
-      });
+      var h, r, _i, _len, _ref;
+      _ref = this.settings.handlers;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        h = _ref[_i];
+        r = h($);
+        if (r) {
+          return r;
+        }
+      }
     };
     crawler.prototype.getContent = function($) {};
     crawler.prototype.onSuccess = function(data) {
@@ -117,9 +123,15 @@
     return crawler;
   })();
   console.log("start");
+  lentaHandler = function($) {
+    console.log($($("#pacman.statya div.dt")[0]).text());
+    console.log($($("#pacman.statya .zpic img")[0]).attr("src"));
+    return console.log($($("#pacman.statya h2")[0]).text());
+  };
   cr = new crawler(null, {
-    url: "http://www.livejournal.ru/themes/id/34176",
-    type: "details"
+    url: "http://www.lenta.ru/news/2011/08/26/mvf/",
+    type: "details",
+    handlers: [lentaHandler]
   });
   cr.crawl();
 }).call(this);

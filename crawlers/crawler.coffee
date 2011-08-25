@@ -19,7 +19,7 @@ class crawler
         
         type : "details" # details, text
         
-        onSuccess : null
+        handlers : []
         
         onError : null
                 
@@ -119,8 +119,9 @@ class crawler
 
     getDetails: ($)->
         
-        $("a").each ->
-            console.log $(@).html()
+        for h in @settings.handlers
+            r = h $
+            if r then return r
       
     getContent: ($)->
         
@@ -132,10 +133,25 @@ class crawler
     onError: (error)->
         console.log "Error : " + error
                 
-console.log "start"
+console.log("start")
+
+#handlers
+
+lentaHandler = ($) ->
+    console.log $($("#pacman.statya div.dt")[0]).text()
+    console.log $($("#pacman.statya .zpic img")[0]).attr "src"
+    console.log $($("#pacman.statya h2")[0]).text()
+    #console.log $(".zpic :first").html()
+    #console.log $("#pacman.statya").html()
+
 
 cr = new crawler null
-            url : "http://www.livejournal.ru/themes/id/34176"
+            url : "http://www.lenta.ru/news/2011/08/26/mvf/"
             type : "details"
+            handlers : [lentaHandler]
             
 cr.crawl()
+
+
+
+
