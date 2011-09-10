@@ -5,7 +5,8 @@
       will be considered knockout as some kind of static object.
       Use old school functions to emulate classes.
   
-  */  var processVM, viewModel;
+  */
+  var processVM, viewModel;
   processVM = function(name) {
     this.name = name;
     this.checked = ko.observable(false);

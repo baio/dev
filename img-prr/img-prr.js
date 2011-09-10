@@ -1,11 +1,11 @@
 (function() {
-  var ImageProcessor, app, express, fs, gm, http, req, utils960gs, utilsSize;
+  var ImageProcessor, fs, gm, http, req, srv, uri, utils960gs, utilsSize;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-  express = require('express');
   gm = require('gm');
   http = require('http');
   fs = require('fs');
   req = require('request');
+  uri = require('url');
   utilsSize = (function() {
     function utilsSize() {}
     utilsSize.getHeight = function(origSize, width) {
@@ -18,11 +18,9 @@
         if (!szn) {
           return true;
         }
-                if (szp != null) {
-          szp;
-        } else {
+        if (szp == null) {
           szp = 0;
-        };
+        }
         r = {
           left: sz - (sz - szp) / 2,
           right: szn - (szn - sz) / 2
@@ -118,13 +116,14 @@
       }
     }
     ImageProcessor.prototype.getSettings = function(req) {
-      var url;
-      url = req.param("url");
+      var query, url;
+      query = uri.parse(req.url, true).query;
+      url = query.url;
       TMP_FILE_NAME = "/tmp/" + url.substring(url.lastIndexOf('/') + 1);
       return {
         url: url,
-        callback: req.param("callback"),
-        process: req.param("process")
+        callback: query.callback,
+        process: query.process
       };
     };
     ImageProcessor.prototype.getProcessor = function(index) {
@@ -151,6 +150,7 @@
       }
     };
     ImageProcessor.prototype.proccess = function() {
+      console.log("2");
       errors = [];
       return req({
         uri: this.options.settings.url,
@@ -162,6 +162,7 @@
     };
     ImageProcessor.prototype.handleResponse = function(error, response, image) {
       var img, mimetype, ws;
+      console.log("3");
       if (!error && response.statusCode === 200) {
         mimetype = response.headers["content-type"];
         if (mimetype === "image/gif" || mimetype === "image/jpeg" || mimetype === "image/jpg" || mimetype === "image/png" || mimetype === "image/tiff") {
@@ -251,11 +252,9 @@
         } else {
           fmt = prms[1];
         }
-                if (height != null) {
-          height;
-        } else {
+        if (height == null) {
           height = width;
-        };
+        }
       }
       switch (fmt) {
         case "%":
@@ -327,13 +326,22 @@
     };
     return ImageProcessor;
   })();
-  app = express.createServer();
-  app.get('/', function(req, res) {
+  /*
+  app = express.createServer()
+  
+  
+  app.get '/', (req, res) ->
+              ImageProcessor.Process request : req, response : res
+          
+  app.listen 8087
+  */
+  srv = http.createServer(function(req, res) {
+    console.log("1");
     return ImageProcessor.Process({
       request: req,
       response: res
     });
   });
-  app.listen(8087);
-  console.log('Server running at http://maxvm.goip.ru:8087/');
+  srv.listen(8087);
+  console.log('Server running at http://maxvm2.goip.ru:8087/');
 }).call(this);

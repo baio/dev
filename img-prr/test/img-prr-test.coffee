@@ -127,7 +127,7 @@ $ ->
         $("#img_dest").imageProcessor "destroy"
         $("#img_dest").imageProcessor
 
-                    server : "http://maxvm.goip.ru:8087"
+                    server : "http://maxvm2.goip.ru:8087"
 
                     src : $("#img_url").val()
 

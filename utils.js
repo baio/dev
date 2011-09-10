@@ -2,11 +2,9 @@
   var s;
   String.prototype.da_trim = function(str, start) {
     var a, r;
-        if (str != null) {
-      str;
-    } else {
+    if (str == null) {
       str = "\s";
-    };
+    }
     a = this;
     if (start === true || !(start != null)) {
       r = new RegExp("^" + str + "+");

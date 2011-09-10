@@ -1,8 +1,9 @@
-express = require 'express'
+#express = require 'express'
 gm = require 'gm'
 http = require 'http'
 fs = require 'fs'
 req = require 'request'
+uri = require 'url'
 #gs960 = require './utils960gs'
 
 class utilsSize
@@ -186,12 +187,13 @@ class ImageProcessor
             @options.settings = @getSettings options.request
                         
     getSettings: (req) ->
-            url = req.param("url")
+            query = uri.parse(req.url, true).query
+            url = query.url
             TMP_FILE_NAME = "/tmp/" + url.substring url.lastIndexOf('/') + 1
             return {
                 url : url
-                callback : req.param "callback"
-                process : req.param "process" }
+                callback : query.callback
+                process : query.process }
 
     getProcessor: (index) ->
         
@@ -212,13 +214,14 @@ class ImageProcessor
             0
                             
     proccess: ->
+        console.log "2"
         errors = []
         req uri : @options.settings.url, encoding : "binary",  (error, response, body) => 
                     @handleResponse error, response, body   
                     null
             
     handleResponse: (error, response, image) ->
-    
+        console.log "3"
         if !error and response.statusCode == 200
     
             mimetype = response.headers["content-type"]
@@ -383,7 +386,7 @@ class ImageProcessor
                 
                 res.end ret
                     
-                
+###
 app = express.createServer()
 
 
@@ -391,7 +394,14 @@ app.get '/', (req, res) ->
             ImageProcessor.Process request : req, response : res
         
 app.listen 8087
+###
 
-console.log 'Server running at http://maxvm.goip.ru:8087/'
+srv = http.createServer (req, res) ->
+        console.log "1"
+        ImageProcessor.Process request : req, response : res
+
+srv.listen 8087
+
+console.log 'Server running at http://maxvm2.goip.ru:8087/'
 
 

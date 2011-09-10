@@ -47,7 +47,6 @@
   console.log("go");
   Grabber.Grab({
     url: "GET http://yandex.ru/yandsearch?p=2&text=poison&lr=213 HTTP/1.1"
-  }, (function() {
     /*
     var stream = fs.createWriteStream('pushlog.txt');
     var written = 0;
@@ -132,5 +131,5 @@
     
     srartHandle(1);
     */
-  })());
+  });
 }).call(this);
