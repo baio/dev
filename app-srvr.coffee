@@ -1,22 +1,39 @@
-http = require 'http'
-fs = require 'fs'
-url = require 'url'
+Http = require 'http'
+Fs = require 'fs'
+Url = require 'url'
+Path = require 'path'
 
-referer = null
 
-http.createServer((req, res) ->
-  uri = url.parse req.url
-  if uri.pathname == "/img-prr"
-      referer = uri
-      console.log req.url
-      res.writeHead 200, 'Content-Type': 'text/html'
-      fs.createReadStream("img-prr/test/img-prr-test.html").pipe res
-  else if uri.headers.referer == referer
-      res.writeHead 200, 'Content-Type': 'text/plain'
-      fs.createReadStream(referer + req.url).pipe res      
-  else
-      res.writeHead 404, 'Content-Type': 'text/plain'
-      res.end "page no found"
-).listen 8087
 
-console.log 'http://maxvm2.goip.ru:8087/'
+server = Http.createServer (req, res) ->
+  
+    url = Url.parse req.url
+    path = '.' + req.url
+  
+    console.log req.url
+  
+    process.on 'uncaughtException',  (err) ->
+        res.writeHead 500, 'Content-Type': 'text/plain'
+        res.end err.toString()
+    
+    ext = Path.extname path
+    contentType = 'text/html'
+    switch ext
+        when '.js' then contentType = 'text/javascript'    
+        when '.css' then contentType = 'text/css'
+    
+
+    Path.exists path, (exists) ->
+        if exists
+              console.log "path : [#{path}] exists"
+              res.writeHead 200, 'Content-Type': contentType
+              Fs.createReadStream(path).pipe res
+        else
+              console.log "path : [#{path}] not exists"
+              res.writeHead 404, 'Content-Type': 'text/plain'
+              res.end "page no found"
+      
+server.listen 8087
+
+
+console.log 'http://localhost:8087/'
