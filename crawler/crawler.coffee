@@ -34,38 +34,46 @@ lentaHandler = ($) ->
 
 srv = http.createServer (req, res) ->        
     
+    handleError = (error) ->
+        error = "Error : " + error
+        console.log error
+        res.writeHead 500, 'Content-Type': 'text/plain'
+        res.end error
+    
+      
+    process.on 'uncaughtException',  (error) ->
+        handleError error
+
     url = Url.parse(req.url, true).query.url    
     
     if url
     
         request { uri : url, encoding: "binary"},  (error, response, body) ->
-                  
-            #translate encoding to UTF-8
-            regex = new RegExp "charset=([\\w-]+)"
-            encoding = regex.exec(response.headers["content-type"])[1].toUpperCase()
-            if encoding != 'UTF-8'
-                iconv = new Iconv encoding, 'UTF-8'
-                body = new Buffer body, 'binary'
-                body = iconv.convert(body).toString();
             
-            parser = new html5.Parser
-                document: window.document
-            parser.parse body
-              
-            jsdom.jQueryify window, 'http://code.jquery.com/jquery-latest.min.js', (window, $) ->
-                r = JSON.stringify lentaHandler($)
-                console.log r
-                res.writeHead 200, 'Content-Type' : 'application/json; charset=UTF-8'
-                res.end r
+            if !error
+                #translate encoding to UTF-8
+                regex = new RegExp "charset=([\\w-]+)"
+                encoding = regex.exec(response.headers["content-type"])[1].toUpperCase()
+                if encoding != 'UTF-8'
+                    iconv = new Iconv encoding, 'UTF-8'
+                    body = new Buffer body, 'binary'
+                    body = iconv.convert(body).toString();
+                
+                parser = new html5.Parser
+                    document: window.document
+                parser.parse body
+                  
+                jsdom.jQueryify window, 'http://code.jquery.com/jquery-latest.min.js', (window, $) ->
+                    r = JSON.stringify lentaHandler($)
+                    console.log r
+                    res.writeHead 200, 'Content-Type' : 'application/json; charset=UTF-8'
+                    res.end r
+            else
+                handleError error
 
     else
-        
-        console.log "'url' query parameter not defined"
-        res.writeHead 500, 'Content-Type': 'text/plain'
-        res.end "'url' query parameter not defined"
-
-               
-
+        handleError "'url' query parameter not defined"
+                       
 
 srv.listen 8088
 
