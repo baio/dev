@@ -1,5 +1,5 @@
 (function() {
-  var Iconv, Url, fs, getHandlers, handlers, html5, http, jsdom, lenta, lenta2, lj, request, srv, window;
+  var Iconv, Url, fs, getDomain, getHandlers, handlers, html5, http, jsdom, lenta, lenta2, lj, prepareUrl, request, srv, window;
   http = require('http');
   request = require('request');
   fs = require('fs');
@@ -65,7 +65,7 @@
       d: "lenta.ru",
       h: lenta2
     }, {
-      d: "navalny.livejournal.com",
+      d: "livejournal.com",
       h: lj
     }
   ];
@@ -77,6 +77,18 @@
     return $.map(r, function(e) {
       return e.h;
     });
+  };
+  prepareUrl = function(url) {
+    var r;
+    r = !url.match(new RegExp("^http[s]?://")) ? "http://" + url : url;
+    console.log(r);
+    return r;
+  };
+  getDomain = function(pathname) {
+    var r;
+    r = pathname.replace(new RegExp('^www\.'), '');
+    r = r.replace(new RegExp('^(\\w+\\.)+(?=[^.]+\\.\\w+)', 'g'), '');
+    return r;
   };
   srv = http.createServer(function(req, res) {
     var domain, handleError, u, url;
@@ -94,11 +106,13 @@
     u = Url.parse(req.url, true);
     url = u.query.url;
     if (url) {
+      url = prepareUrl(url);
       u = Url.parse(url);
       if (!u.hostname) {
         throw "'Url' query parameter invalid format";
       }
-      domain = u.hostname.replace(new RegExp('^www\.'), '');
+      domain = getDomain(u.hostname);
+      console.log("url : " + url + ", domain : " + domain);
       return request({
         uri: url,
         encoding: "binary"

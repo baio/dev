@@ -50,12 +50,24 @@ lj = ($) ->
 handlers = [
         {d : "lenta.ru", h : lenta }
         {d : "lenta.ru", h : lenta2 }
-        {d : "navalny.livejournal.com", h : lj }
+        {d : "livejournal.com", h : lj }
     ]
     
 getHandlers = ($, domain) ->
     r =  $.grep handlers, (e) -> e.d == domain
     $.map r, (e) -> e.h
+
+prepareUrl = (url) ->
+    r = if !url.match new RegExp "^http[s]?://" then "http://" + url else url
+    #r = r.replace new RegExp('(?:^http[s]?://)www\.'), ''
+    console.log r
+    r
+    
+getDomain = (pathname) ->
+    r = pathname.replace new RegExp('^www\.'), ''
+    #r = r.replace new RegExp('^(\\w+\.)(?=\\w+\.\\w+)','g'), ''
+    r = r.replace new RegExp('^(\\w+\\.)+(?=[^.]+\\.\\w+)', 'g'), ''
+    r
     
 srv = http.createServer (req, res) ->        
     
@@ -70,15 +82,19 @@ srv = http.createServer (req, res) ->
         handleError error
     
     u = Url.parse req.url, true
-    url = u.query.url    
+    url = u.query.url
     
     if url
+        
+        url = prepareUrl url
     
         u = Url.parse url
         
         if !u.hostname then throw "'Url' query parameter invalid format"
         
-        domain = u.hostname.replace new RegExp('^www\.'), ''
+        domain = getDomain u.hostname
+        
+        console.log "url : #{url}, domain : #{domain}"
     
         request { uri : url, encoding: "binary"},  (error, response, body) ->
             
