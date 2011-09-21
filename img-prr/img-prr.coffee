@@ -400,7 +400,7 @@ srv = http.createServer (req, res) ->
         console.log "1"
         ImageProcessor.Process request : req, response : res
 
-srv.listen 8087
+srv.listen 8089
 
 console.log 'Server running at http://maxvm2.goip.ru:8087/'
 
