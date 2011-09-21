@@ -342,6 +342,6 @@
       response: res
     });
   });
-  srv.listen(8087);
-  console.log('Server running at http://maxvm2.goip.ru:8087/');
+  srv.listen(8089);
+  console.log('Server running at http://dataavail.com:8089/');
 }).call(this);

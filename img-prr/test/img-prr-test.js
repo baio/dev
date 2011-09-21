@@ -190,7 +190,7 @@
       }
       $("#img_dest").imageProcessor("destroy");
       return $("#img_dest").imageProcessor({
-        server: "http://maxvm2.goip.ru:8087",
+        server: "http://dataavail.com:8089",
         src: $("#img_url").val(),
         process: srvParams,
         animateCss: $("#animate_img").attr("checked") ? "img-prr-animated" : void 0,
