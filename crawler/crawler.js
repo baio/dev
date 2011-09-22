@@ -91,7 +91,7 @@
     return r;
   };
   srv = http.createServer(function(req, res) {
-    var domain, handleError, u, url;
+    var domain, handleError, jsonp, u, url;
     handleError = function(error) {
       error = "Error : " + error;
       console.log(error);
@@ -105,6 +105,7 @@
     });
     u = Url.parse(req.url, true);
     url = u.query.url;
+    jsonp = u.query.jsonp;
     if (url) {
       url = prepareUrl(url);
       u = Url.parse(url);
@@ -142,6 +143,9 @@
             }
             if (r) {
               r = JSON.stringify(r);
+              if (jsonp) {
+                r = "" + jsonp + "([" + r + "])";
+              }
               console.log(r);
               res.writeHead(200, {
                 'Content-Type': 'application/json; charset=UTF-8'
@@ -159,6 +163,6 @@
       return handleError("'url' query parameter not defined");
     }
   });
-  srv.listen(8088);
-  console.log("listen on http://localhost:8088/");
+  srv.listen(8090);
+  console.log("listen on http://dataavail.com:8090/");
 }).call(this);

@@ -83,6 +83,7 @@ srv = http.createServer (req, res) ->
     
     u = Url.parse req.url, true
     url = u.query.url
+    jsonp = u.query.jsonp
     
     if url
         
@@ -121,6 +122,7 @@ srv = http.createServer (req, res) ->
                         
                     if r
                         r = JSON.stringify r
+                        if jsonp then r = "#{jsonp}([#{r}])"
                         console.log r
                         res.writeHead 200, 'Content-Type' : 'application/json; charset=UTF-8'
                         res.end r
@@ -133,8 +135,8 @@ srv = http.createServer (req, res) ->
         handleError "'url' query parameter not defined"
                        
 
-srv.listen 8088
+srv.listen 8090
 
-console.log "listen on http://localhost:8088/"
+console.log "listen on http://dataavail.com:8090/"
 
 
