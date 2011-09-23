@@ -9,11 +9,9 @@ jsdom.defaultDocumentFeatures = {
   MutationEvents           : '2.0',
   QuerySelector            : false
 }
-html5 = require 'html5' #https://github.com/aredridel/html5
+html5 = require 'html5' 
 Iconv = require('iconv').Iconv
 Url = require 'url'
-
-window = jsdom.jsdom().createWindow null, null,  parser : html5
 
 String::rn = () ->
     @replace /\n+/gm,"\n"
@@ -107,6 +105,8 @@ srv = http.createServer (req, res) ->
                 body = new Buffer body, 'binary'
                 body = iconv.convert(body).toString();
                 
+                window = jsdom.jsdom().createWindow null, null,  parser : html5
+                
                 parser = new html5.Parser
                     document: window.document
                 parser.parse body
@@ -135,8 +135,8 @@ srv = http.createServer (req, res) ->
         handleError "'url' query parameter not defined"
                        
 
-srv.listen 8090
+srv.listen 8088
 
-console.log "listen on http://dataavail.com:8090/"
+console.log "listen on http://dataavail.com:8088/"
 
 

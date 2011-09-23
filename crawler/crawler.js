@@ -1,5 +1,5 @@
 (function() {
-  var Iconv, Url, fs, getDomain, getHandlers, handlers, html5, http, jsdom, lenta, lenta2, lj, prepareUrl, request, srv, window;
+  var Iconv, Url, fs, getDomain, getHandlers, handlers, html5, http, jsdom, lenta, lenta2, lj, prepareUrl, request, srv;
   http = require('http');
   request = require('request');
   fs = require('fs');
@@ -13,9 +13,6 @@
   html5 = require('html5');
   Iconv = require('iconv').Iconv;
   Url = require('url');
-  window = jsdom.jsdom().createWindow(null, null, {
-    parser: html5
-  });
   String.prototype.rn = function() {
     return this.replace(/\n+/gm, "\n");
   };
@@ -118,13 +115,16 @@
         uri: url,
         encoding: "binary"
       }, function(error, response, body) {
-        var encoding, iconv, parser, regex;
+        var encoding, iconv, parser, regex, window;
         if (!error) {
           regex = new RegExp("charset=([\\w-]+)");
           encoding = regex.exec(response.headers["content-type"])[1].toUpperCase();
           iconv = new Iconv(encoding, 'UTF-8');
           body = new Buffer(body, 'binary');
           body = iconv.convert(body).toString();
+          window = jsdom.jsdom().createWindow(null, null, {
+            parser: html5
+          });
           parser = new html5.Parser({
             document: window.document
           });
@@ -163,6 +163,6 @@
       return handleError("'url' query parameter not defined");
     }
   });
-  srv.listen(8090);
-  console.log("listen on http://dataavail.com:8090/");
+  srv.listen(8088);
+  console.log("listen on http://dataavail.com:8088/");
 }).call(this);
